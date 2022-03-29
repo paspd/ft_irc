@@ -126,11 +126,13 @@ public:
 					_clients[i].resetClient();
 				}
 				else {
-					buffer[retread++] = ' ';
+					// buffer[retread++] = ' ';
 					buffer[retread] = '\0';
 					std::string str_buffer = buffer;
-					std::string separator = " ";
+					std::string separator = " \t\v\r\n";
 					std::vector<std::string> command = _split(buffer, separator);
+					if (!command.size())
+						return ;
 					std::cout << "Client number " << i << " has send a message : ";
 					for (size_t i = 0; i < command.size(); i++) {
 						std::cout << command[i] << " ";
@@ -143,7 +145,7 @@ public:
 						if (_clients[i].getAccepted())
 							throw Exception::ERR_ALREADYREGISTERED();
 						else if (command.size() < 2)
-							throw Exception::ERR_NEEDMOREPARAMS();
+							throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 						else if (command.size() == 2 && command[1] == _password) {
 								_clients[i].acceptClient();
 								std::cout << "Client number " << i << " has been accepted." << std::endl;
@@ -155,17 +157,17 @@ public:
 						if (!_clients[i].getAccepted())
 							throw Exception::ERR_RESTRICTED();
 						else if (command.size() < 2)
-							throw Exception::ERR_NEEDMOREPARAMS();
+							throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 						else if (command.size() > 3)
-							sendMessage(CLIENT_SOCKET);
+							throw Exception::ERR_NONICKNAMEGIVEN();
 						else if (!_checkValidityNick(command[1]))
-							sendMessage(str(), ERR_ERRONEUSNICKNAME, CLIENT_SOCKET);
+							throw Exception::ERR_ERRONEOUSNICKNAME(command[1]);
 						else if (command[1] == _clients[i].getClientNickname())
-							sendMessage(ClientNickname().c_str(), ERR_NICKNAMEINUSE, CLIENT_SOCKET);
+							throw Exception::ERR_NICKNAMEINUSE(command[1]);
 						else {
 							for (size_t j = 0; j < MAX_CLIENTS; j++) {
 								if (command[1] == _clients[j].getClientNickname()) {
-									sendMessage(str(), ERR_NICKCOLLISION, CLIENT_SOCKET);
+									throw Exception::ERR_NICKCOLLISION(command[1]);
 									break ;
 								}
 								else if (j == MAX_CLIENTS - 1) {
@@ -176,7 +178,7 @@ public:
 						}
 					}
 					else
-						throw Exception::ERR_UNKNOWNCOMMAND();
+						throw Exception::ERR_UNKNOWNCOMMAND(command[0]);
 					}
 					catch (std::exception &e){
 						sendMessage(CLIENT_SOCKET, e.what());

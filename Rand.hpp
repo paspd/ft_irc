@@ -45,7 +45,7 @@ class name : public std::exception {																			\
 		private:																								\
 			std::string exceptionMessageBuilder(const std::string &func, const std::string &message) const {	\
 				std::stringstream ss;																			\
-				ss << func << ": " << message;																	\
+				ss << func << ": " << message << CRLF;																\
 				return (ss.str());																				\
 			}																									\
 		public:																									\
@@ -93,6 +93,7 @@ namespace Exception {
 		IRC_EXCEPTION(ERR_RESTRICTED, "484 :Your connection is restricted!\r\n")
 		IRC_EXCEPTION_CUSTOM(ERR_UNKNOWNCOMMAND, ERR_UNKNOWNCOMMAND_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NEEDMOREPARAMS, ERR_NEEDMOREPARAMS_BUILDER)
+		IRC_EXCEPTION_CUSTOM(ERR_NICKCOLLISION, ERR_NICKCOLLISION_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_ERRONEOUSNICKNAME, ERR_ERRONEOUSNICKNAME_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NICKNAMEINUSE, ERR_NICKNAMEINUSE_BUILDER)
 };
