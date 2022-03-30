@@ -142,28 +142,20 @@ public:
 					try {					
 
 					if (command[0] == "PASS") {
-						if (_clients[i].getAccepted())
-							throw Exception::ERR_ALREADYREGISTERED();
-						else if (command.size() < 2)
-							throw Exception::ERR_NEEDMOREPARAMS(command[0]);
-						else if (command.size() == 2 && command[1] == _password) {
-								_clients[i].acceptClient();
-								std::cout << "Client number " << i << " has been accepted." << std::endl;
-						}
-						else
-							throw Exception::ERR_PASSWDMISMATCH();
+						if (_clients[i].getLogged()) throw Exception::ERR_ALREADYREGISTERED();
+						if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
+						if (command.size() == 2 && command[1] != _password) throw Exception::ERR_PASSWDMISMATCH();
+
+						_clients[i].logClient();
+						std::cout << "Client number " << i << " has been accepted." << std::endl;
 					}
 					else if (command[0] == "NICK") {
-						if (!_clients[i].getAccepted())
-							throw Exception::ERR_RESTRICTED();
-						else if (command.size() < 2)
-							throw Exception::ERR_NEEDMOREPARAMS(command[0]);
-						else if (command.size() > 3)
-							throw Exception::ERR_NONICKNAMEGIVEN();
-						else if (!_checkValidityNick(command[1]))
-							throw Exception::ERR_ERRONEOUSNICKNAME(command[1]);
-						else if (command[1] == _clients[i].getClientNickname())
-							throw Exception::ERR_NICKNAMEINUSE(command[1]);
+						if (!_clients[i].getLogged()) throw Exception::ERR_NOTREGISTERED();
+						if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
+						if (command.size() > 3) throw Exception::ERR_NONICKNAMEGIVEN();
+						if (!_checkValidityNick(command[1])) throw Exception::ERR_ERRONEOUSNICKNAME(command[1]);
+						if (command[1] == _clients[i].getClientNickname()) throw Exception::ERR_NICKNAMEINUSE(command[1]);
+
 						else {
 							for (size_t j = 0; j < MAX_CLIENTS; j++) {
 								if (command[1] == _clients[j].getClientNickname()) {
@@ -172,15 +164,42 @@ public:
 								}
 								else if (j == MAX_CLIENTS - 1) {
 									_clients[i].setClientNickname(command[1]);
+									_clients[i].nickClient();
 									std::cout << "Client number " << i << " has been change his nickname to : " << _clients[i].getClientNickname() << "." << std::endl;
 								}
 							}
 						}
 					}
-					else
-						throw Exception::ERR_UNKNOWNCOMMAND(command[0]);
+					else if (command[0] == "USER") {
+						if (!_clients[i].getLogged()) throw Exception::ERR_NOTREGISTERED();
+						if (_clients[i].getRegistred()) throw Exception::ERR_ALREADYREGISTERED();
+						if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
+
+						_clients[i].setClientUsername(command[1]);
+						_clients[i].setClientMode(std::atoi(command[2].c_str()));
+						_clients[i].setClientRealname(_catArguments(command.begin() + 4, command.end()));
+						_clients[i].registreClient();
+
+						std::cout << "Client number " << i << " has been change his username to : " << _clients[i].getClientUsername() << ", his mode to :" << _clients[i].getClientMode() << " and his realname to :" << _clients[i].getClientRealname() << std::endl;
 					}
-					catch (std::exception &e){
+					else if (command[0] == "JOIN") { }
+					else if (command[0] == "MSG") { }
+					else if (command[0] == "PRIVMSG") { }
+					else if (command[0] == "QUIT") {
+						throw Exception::ERR_QUIT(inet_ntoa(_clients[i].getClientAddress().sin_addr));
+					}
+					else throw Exception::ERR_UNKNOWNCOMMAND(command[0]);
+					if (!_clients[0].getWelcome() && _clients[i].getLogged() && _clients[i].getRegistred() && _clients[i].getNicked()) {
+						sendMessage(CLIENT_SOCKET, RPL_WELCOME(_clients[i].getClientNickname(), _clients[i].getClientUsername(), inet_ntoa(_clients[i].getClientAddress().sin_addr)));
+						sendMessage(CLIENT_SOCKET, RPL_YOURHOST);
+						
+					}
+
+					}
+					catch (Exception::ERR_QUIT &e) {
+						sendMessage(CLIENT_SOCKET, e.what());
+					}
+					catch (std::exception &e) {
 						sendMessage(CLIENT_SOCKET, e.what());
 					}
 				}
@@ -217,6 +236,17 @@ private:
 		return output;
 	}
 
+	std::string	_catArguments(std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end) {
+		std::stringstream ss;
+
+		while (begin != end) {
+			ss << *begin;
+			if (begin != end - 1)
+				ss << " ";
+			begin++;
+		}
+		return ss.str();
+	}
 
 
 

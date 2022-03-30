@@ -21,6 +21,12 @@ typedef struct sockaddr_in SOCKADDR_IN;
 typedef socklen_t SOCKLEN_T;
 typedef struct sockaddr SOCKADDR;
 
+#define SERVER_NAME "IRC of ldauga"
+#define VERSION "v 0.0.0"
+#define CREATION_DATE "28.03.2022"
+
+#define USER_MODE_AVAILABLE "BDG"
+
 #define MAX_CLIENTS 1024
 
 #define CLIENT_SOCKET _clients[i].getClientSocket()
@@ -31,14 +37,24 @@ typedef struct sockaddr SOCKADDR;
 #define CRLF "\r\n"
 
 
+//WELCOME
+#define RPL_WELCOME(nick, user, host) ("001 Welcome to the Internet Relay Network" + nick + "!" + user + "@" + host + CRLF)
+#define RPL_YOURHOST ("002 Your host is " + SERVER_NAME + ", running version " + VERSION + CRLF)
+#define RPL_CREATED ("003 This server was created " + CREATION_DATE + CRLF)
+#define RPL_MYINFO ("004 " + SERVER_NAME + " " + VERSION + " " +  + CRLF)
+
 // GLOBAL
 #define ERR_UNKNOWNCOMMAND_BUILDER(command) ("421 * " + command + " :Unknown command" + CRLF)
 #define ERR_NEEDMOREPARAMS_BUILDER(command) ("461 * " + command + " :Not enough parameters" + CRLF)
 
 //NICK
-#define ERR_NICKCOLLISION_BUILDER(nick) (" * " + nick + " :Nickname collision" + CRLF)
+#define ERR_NICKCOLLISION_BUILDER(nick) ("436 * " + nick + " :Nickname collision" + CRLF)
 #define ERR_NICKNAMEINUSE_BUILDER(nickname) ("433 * " + nickname + " :Nickname is already in use" + CRLF)
 #define ERR_ERRONEOUSNICKNAME_BUILDER(nickname) ("432 * " + nickname + " :Erroneous nickname" + CRLF)
+
+//QUIT
+#define ERR_QUIT_BUILDER(ip) ("ERROR :Closing link: " + ip + "(Client Quit)" + CRLF)
+
 
 #define SERVER_EXCEPTION(name, function)																		\
 class name : public std::exception {																			\
@@ -86,8 +102,8 @@ namespace Exception {
 		SERVER_EXCEPTION(ReadFailed, "read")
 
 
-		IRC_EXCEPTION(ERR_NONICKNAMEGIVEN, "431 PASS :Password incorrect\r\n")
-		IRC_EXCEPTION(ERR_NOTREGISTERED, "451 :No nickname given\r\n")
+		IRC_EXCEPTION(ERR_NONICKNAMEGIVEN, "431 :No nickname given\r\n")
+		IRC_EXCEPTION(ERR_NOTREGISTERED, "451 :You have not registered\r\n")
 		IRC_EXCEPTION(ERR_PASSWDMISMATCH, "464 * PASS :Password incorrect\r\n")
 		IRC_EXCEPTION(ERR_ALREADYREGISTERED, "462 * PASS :Unauthorized command (already registered)\r\n")
 		IRC_EXCEPTION(ERR_RESTRICTED, "484 :Your connection is restricted!\r\n")
@@ -96,6 +112,7 @@ namespace Exception {
 		IRC_EXCEPTION_CUSTOM(ERR_NICKCOLLISION, ERR_NICKCOLLISION_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_ERRONEOUSNICKNAME, ERR_ERRONEOUSNICKNAME_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NICKNAMEINUSE, ERR_NICKNAMEINUSE_BUILDER)
+		IRC_EXCEPTION_CUSTOM(ERR_QUIT, ERR_QUIT_BUILDER)
 };
 
 #endif
