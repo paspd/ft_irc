@@ -103,6 +103,7 @@ public:
 			SOCKLEN_T new_address_length = sizeof(new_address);
 			if ((new_socket = accept(_masterSocket, (struct sockaddr *)&new_address, (socklen_t*)&new_address_length)) < 0)
 				throw Exception::AcceptFailed();
+				//err server full
 			std::cout << "New connection at socket number " << new_socket << ", ip is : " << inet_ntoa(new_address.sin_addr) << ", port : " << ntohs(new_address.sin_port) << std::endl;
 			for (int i = 0; i < MAX_CLIENTS; i++) {
 				if (CLIENT_SOCKET == 0) {
