@@ -187,6 +187,8 @@ public:
 					else if (command[0] == "MSG") { }
 					else if (command[0] == "PRIVMSG") {
 
+
+
 					}
 					else if (command[0] == "QUIT") {
 						throw Exception::ERR_QUIT(inet_ntoa(_clients[i].getClientAddress().sin_addr));
