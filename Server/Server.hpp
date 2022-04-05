@@ -197,6 +197,7 @@ public:
 						sendMessage(CLIENT_SOCKET, RPL_YOURHOST);
 
 					}
+					
 
 					}
 					catch (Exception::ERR_QUIT &e) {
