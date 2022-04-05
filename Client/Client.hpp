@@ -14,11 +14,11 @@ private:
 	
 	int _clientMode;
 
-	bool _logged;
-	bool _nicked;
-	bool _registred;
+	bool _passBool;
+	bool _nickBool;
+	bool _userBool;
 
-	bool _welcome;
+	bool _welcomeBool;
 
 	std::string _nickname;
 	std::string _username;
@@ -38,20 +38,20 @@ public:
 		return _clientAddress;
 	}
 
-	bool getLogged() const {
-		return _logged;
+	bool getNickBool() const {
+		return _nickBool;
 	}
 
-	bool getRegistred() const {
-		return _registred;
+	bool getPassBool() const {
+		return _passBool;
 	}
 
-	bool getNicked() const {
-		return _registred;
+	bool getUserBool() const {
+		return _userBool;
 	}
 
-	bool getWelcome() const {
-		return _registred;
+	bool getWelcomeBool() const {
+		return _welcomeBool;
 	}
 
 	std::string getClientNickname() const {
@@ -98,29 +98,29 @@ public:
 		_clientAddress.sin_addr.s_addr = 0;
 		_clientAddress.sin_port = 0;
 		_clientAddressLength = 0;
-		_logged = false;
-		_nicked = false;
-		_registred = false;
-		_welcome = false;
+		_passBool = false;
+		_userBool = false;
+		_nickBool = false;
+		_welcomeBool = false;
 		_nickname.erase();
 		_username.erase();
 		_realname.erase();
 	}
 
-	void logClient() {
-		_logged = true;
+	void passBoolClient() {
+		_passBool = true;
 	}
 
-	void nickClient() {
-		_logged = true;
+	void userBoolClient() {
+		_userBool = true;
 	}
 	
-	void registreClient() {
-		_registred = true;
+	void nickBoolClient() {
+		_nickBool = true;
 	}
 
-	void welcomeClient() {
-		_welcome = true;
+	void welcomeBoolClient() {
+		_welcomeBool = true;
 	}
 
 	Client() {};

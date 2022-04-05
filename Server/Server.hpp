@@ -143,15 +143,15 @@ public:
 					try {
 
 					if (command[0] == "PASS") {
-						if (_clients[i].getLogged()) throw Exception::ERR_ALREADYREGISTERED();
+						if (_clients[i].getPassBool()) throw Exception::ERR_ALREADYREGISTERED();
 						if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 						if (command.size() == 2 && command[1] != _password) throw Exception::ERR_PASSWDMISMATCH();
 
-						_clients[i].logClient();
+						_clients[i].passBoolClient();
 						std::cout << "Client number " << i << " has been accepted." << std::endl;
 					}
 					else if (command[0] == "NICK") {
-						if (!_clients[i].getLogged()) throw Exception::ERR_NOTREGISTERED();
+						if (!_clients[i].getPassBool()) throw Exception::ERR_NOTREGISTERED();
 						if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 						if (command.size() > 3) throw Exception::ERR_NONICKNAMEGIVEN();
 						if (!_checkValidityNick(command[1])) throw Exception::ERR_ERRONEOUSNICKNAME(command[1]);
@@ -165,21 +165,21 @@ public:
 								}
 								else if (j == MAX_CLIENTS - 1) {
 									_clients[i].setClientNickname(command[1]);
-									_clients[i].nickClient();
+									_clients[i].nickBoolClient();
 									std::cout << "Client number " << i << " has been change his nickname to : " << _clients[i].getClientNickname() << "." << std::endl;
 								}
 							}
 						}
 					}
 					else if (command[0] == "USER") {
-						if (!_clients[i].getLogged()) throw Exception::ERR_NOTREGISTERED();
-						if (_clients[i].getRegistred()) throw Exception::ERR_ALREADYREGISTERED();
-						if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
+						if (!_clients[i].getPassBool()) throw Exception::ERR_NOTREGISTERED();
+						if (_clients[i].getUserBool()) throw Exception::ERR_ALREADYREGISTERED();
+						if (command.size() < 5) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 
 						_clients[i].setClientUsername(command[1]);
 						_clients[i].setClientMode(std::atoi(command[2].c_str()));
 						_clients[i].setClientRealname(_catArguments(command.begin() + 4, command.end()));
-						_clients[i].registreClient();
+						_clients[i].userBoolClient();
 
 						std::cout << "Client number " << i << " has been change his username to : " << _clients[i].getClientUsername() << ", his mode to :" << _clients[i].getClientMode() << " and his realname to :" << _clients[i].getClientRealname() << std::endl;
 					}
@@ -192,7 +192,11 @@ public:
 						throw Exception::ERR_QUIT(inet_ntoa(_clients[i].getClientAddress().sin_addr));
 					}
 					else throw Exception::ERR_UNKNOWNCOMMAND(command[0]);
-					if (!_clients[0].getWelcome() && _clients[i].getLogged() && _clients[i].getRegistred() && _clients[i].getNicked()) {
+					std::cout << _clients[i].getWelcomeBool() << std::endl;
+					std::cout << _clients[i].getPassBool() << std::endl;
+					std::cout << _clients[i].getNickBool() << std::endl;
+					std::cout << _clients[i].getUserBool() << std::endl;
+					if (!_clients[i].getWelcomeBool() && _clients[i].getPassBool() && _clients[i].getNickBool() && _clients[i].getUserBool()) {
 						sendMessage(CLIENT_SOCKET, RPL_WELCOME(_clients[i].getClientNickname(), _clients[i].getClientUsername(), inet_ntoa(_clients[i].getClientAddress().sin_addr)));
 						sendMessage(CLIENT_SOCKET, RPL_YOURHOST);
 
@@ -252,7 +256,7 @@ private:
 		return ss.str();
 	}
 
-		
+	
 
 
 

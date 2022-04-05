@@ -29,6 +29,8 @@ typedef struct sockaddr SOCKADDR;
 
 #define MAX_CLIENTS 1024
 
+#define MAX_CLIENTS_CHAN 10
+
 #define CLIENT_SOCKET _clients[i].getClientSocket()
 
 #define PASS (char *)"PASS"
