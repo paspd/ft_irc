@@ -1,8 +1,9 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "../Rand.hpp"
 #include "../Client/Client.hpp"
+#include "../Channel/Channel.hpp"
+#include "../Rand.hpp"
 
 class Server
 {
@@ -194,17 +195,13 @@ public:
 						throw Exception::ERR_QUIT(inet_ntoa(_clients[i].getClientAddress().sin_addr));
 					}
 					else throw Exception::ERR_UNKNOWNCOMMAND(command[0]);
-					std::cout << _clients[i].getWelcomeBool() << std::endl;
-					std::cout << _clients[i].getPassBool() << std::endl;
-					std::cout << _clients[i].getNickBool() << std::endl;
-					std::cout << _clients[i].getUserBool() << std::endl;
 					if (!_clients[i].getWelcomeBool() && _clients[i].getPassBool() && _clients[i].getNickBool() && _clients[i].getUserBool()) {
 						sendMessage(CLIENT_SOCKET, RPL_WELCOME(_clients[i].getClientNickname(), _clients[i].getClientUsername(), inet_ntoa(_clients[i].getClientAddress().sin_addr)));
 						sendMessage(CLIENT_SOCKET, RPL_YOURHOST);
-
+						sendMessage(CLIENT_SOCKET, RPL_CREATED);
+						sendMessage(CLIENT_SOCKET, RPL_MYINFO);
+						_clients[i].welcomeBoolClient();
 					}
-
-
 					}
 					catch (Exception::ERR_QUIT &e) {
 						sendMessage(CLIENT_SOCKET, e.what());

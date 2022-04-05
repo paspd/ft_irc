@@ -16,6 +16,7 @@
 #include <vector>
 #include <sstream>
 
+
 typedef int SOCKET;
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef socklen_t SOCKLEN_T;
@@ -25,11 +26,14 @@ typedef struct sockaddr SOCKADDR;
 #define VERSION "v 0.0.0"
 #define CREATION_DATE "28.03.2022"
 
-#define USER_MODE_AVAILABLE "BDG"
+#define USER_MODE_AVAILABLE ""
+#define CHAN_MODE_AVAILABLE ""
 
 #define MAX_CLIENTS 1024
-
 #define MAX_CLIENTS_CHAN 10
+
+#define MAX_CURRENT_CHAN 5
+
 
 #define CLIENT_SOCKET _clients[i].getClientSocket()
 
@@ -40,10 +44,10 @@ typedef struct sockaddr SOCKADDR;
 
 
 //WELCOME
-#define RPL_WELCOME(nick, user, host) ("001 Welcome to the Internet Relay Network" + nick + "!" + user + "@" + host + CRLF)
+#define RPL_WELCOME(nick, user, host) ("001 Welcome to the Internet Relay Network " + nick + "!" + user + "@" + host + CRLF)
 #define RPL_YOURHOST (static_cast<std::string>("002 Your host is ") + static_cast<std::string>(SERVER_NAME) + static_cast<std::string>(", running version ") + static_cast<std::string>(VERSION) + static_cast<std::string>(CRLF))
-#define RPL_CREATED ("003 This server was created " + CREATION_DATE + CRLF)
-#define RPL_MYINFO ("004 " + SERVER_NAME + " " + VERSION + " " +  + CRLF)
+#define RPL_CREATED (static_cast<std::string>("003 This server was created ") + static_cast<std::string>(CREATION_DATE) + static_cast<std::string>(CRLF))
+#define RPL_MYINFO (static_cast<std::string>("004 ") + static_cast<std::string>(SERVER_NAME) + static_cast<std::string>(" ") + static_cast<std::string>(VERSION) + static_cast<std::string>(" ") + static_cast<std::string>(USER_MODE_AVAILABLE) + static_cast<std::string>(" ") + static_cast<std::string>(CHAN_MODE_AVAILABLE) + static_cast<std::string>(" ") + static_cast<std::string>(CRLF))
 
 // GLOBAL
 #define ERR_UNKNOWNCOMMAND_BUILDER(command) ("421 * " + command + " :Unknown command" + CRLF)

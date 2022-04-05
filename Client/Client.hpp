@@ -3,6 +3,7 @@
 
 #include <iostream>
 
+#include "../Channel/Channel.hpp"
 #include "../Rand.hpp"
 
 class Client
@@ -23,6 +24,8 @@ private:
 	std::string _nickname;
 	std::string _username;
 	std::string _realname;
+
+	std::vector<Channel> _currentChannels;
 
 public:
 	
