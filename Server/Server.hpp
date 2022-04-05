@@ -35,8 +35,8 @@ public:
 
 	~Server() {};
 
-	
-	
+
+
 	void createMasterSocket(void) {
 		if((_masterSocket = socket(AF_INET , SOCK_STREAM , 0)) == 0)
 			throw Exception::MasterSocketCreationFailed();
@@ -54,7 +54,7 @@ public:
 	}
 
 	void serverListen() {
-		std::cout << "Listening on port " << _port << " ..." << std::endl; 
+		std::cout << "Listening on port " << _port << " ..." << std::endl;
 		if (listen(_masterSocket, SOMAXCONN) < 0)
 			throw Exception::ListenFailed();
 	}
@@ -76,9 +76,9 @@ public:
 
 	void resetSocketDescriptor() {
 		FD_ZERO(&_socketDescriptor);
-		
+
 		FD_SET(_masterSocket, &_socketDescriptor);
-		
+
 		_maxSocket = _masterSocket;
 
 		for (int i = 0; i < MAX_CLIENTS; i++) {
@@ -93,7 +93,7 @@ public:
 	void checkActivity() {
 		if (select(_maxSocket + 1, &_socketDescriptor ,NULL, NULL, NULL) < 0 && (errno != EINTR))
 			throw Exception::SelectFailed();
-		
+
 	}
 
 	void checkServerActivity() {
@@ -140,7 +140,7 @@ public:
 					}
 					std::cout << std::endl;
 
-					try {					
+					try {
 
 					if (command[0] == "PASS") {
 						if (_clients[i].getLogged()) throw Exception::ERR_ALREADYREGISTERED();
@@ -185,7 +185,9 @@ public:
 					}
 					else if (command[0] == "JOIN") { }
 					else if (command[0] == "MSG") { }
-					else if (command[0] == "PRIVMSG") { }
+					else if (command[0] == "PRIVMSG") {
+
+					}
 					else if (command[0] == "QUIT") {
 						throw Exception::ERR_QUIT(inet_ntoa(_clients[i].getClientAddress().sin_addr));
 					}
@@ -193,7 +195,7 @@ public:
 					if (!_clients[0].getWelcome() && _clients[i].getLogged() && _clients[i].getRegistred() && _clients[i].getNicked()) {
 						sendMessage(CLIENT_SOCKET, RPL_WELCOME(_clients[i].getClientNickname(), _clients[i].getClientUsername(), inet_ntoa(_clients[i].getClientAddress().sin_addr)));
 						sendMessage(CLIENT_SOCKET, RPL_YOURHOST);
-						
+
 					}
 
 					}
@@ -224,7 +226,7 @@ private:
 	std::vector<std::string> _split(const std::string &str, const std::string &delimiters) {
 		std::size_t prev_pos = 0, pos = 0;
 		std::vector<std::string> output;
-	
+
 		while((pos = str.find_first_of(delimiters, prev_pos)) != std::string::npos) {
 			if(pos > prev_pos) {
 				output.push_back(str.substr(prev_pos, pos - prev_pos));
