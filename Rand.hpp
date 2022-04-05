@@ -39,7 +39,7 @@ typedef struct sockaddr SOCKADDR;
 
 //WELCOME
 #define RPL_WELCOME(nick, user, host) ("001 Welcome to the Internet Relay Network" + nick + "!" + user + "@" + host + CRLF)
-#define RPL_YOURHOST ("002 Your host is " + SERVER_NAME + ", running version " + VERSION + CRLF)
+#define RPL_YOURHOST (static_cast<std::string>("002 Your host is ") + static_cast<std::string>(SERVER_NAME) + static_cast<std::string>(", running version ") + static_cast<std::string>(VERSION) + static_cast<std::string>(CRLF))
 #define RPL_CREATED ("003 This server was created " + CREATION_DATE + CRLF)
 #define RPL_MYINFO ("004 " + SERVER_NAME + " " + VERSION + " " +  + CRLF)
 
