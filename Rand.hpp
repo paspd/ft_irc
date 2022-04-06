@@ -16,7 +16,6 @@
 #include <vector>
 #include <sstream>
 
-
 typedef int SOCKET;
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef socklen_t SOCKLEN_T;
@@ -131,5 +130,9 @@ namespace Exception {
 		IRC_EXCEPTION_CUSTOM(ERR_NOSUCHCHANNEL, ERR_NOSUCHCHANNEL_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_QUIT, ERR_QUIT_BUILDER)
 };
+
+#include "Server/Server.hpp"
+#include "Channel/Channel.hpp"
+#include "Client/Client.hpp"
 
 #endif
