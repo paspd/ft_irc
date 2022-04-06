@@ -6,6 +6,8 @@
 #include "../Channel/Channel.hpp"
 #include "../Rand.hpp"
 
+class Channel;
+
 class Client
 {
 private:
@@ -126,9 +128,42 @@ public:
 		_welcomeBool = true;
 	}
 
+	bool addChannel(Channel const &channel) {
+		for (size_t i = 0; i < MAX_CURRENT_CHAN; i++)
+		{
+			if (!_currentChannels[i].getCreated()) {
+				_currents[i] = channel;
+				return true;
+			}
+			if (i == MAX_CURRENT_CHAN - 1)
+				return false;
+		}
+		
+	}
+
+	Client &operator=(Client const &rhs) {
+		_clientMode = rhs._clientMode;
+		_clientSocket = rhs._clientSocket;
+		_clientAddress.sin_family = rhs._clientAddress.sin_family;
+		_clientAddress.sin_addr.s_addr = rhs._clientAddress.sin_addr.s_addr;
+		_clientAddress.sin_port = rhs._clientAddress.sin_port;
+		_clientAddressLength = rhs._clientAddressLength;
+		_passBool = rhs._passBool;
+		_userBool = rhs._userBool;
+		_nickBool = rhs._nickBool;
+		_welcomeBool = rhs._welcomeBool;
+		_nickname = rhs._nickname;
+		_username = rhs._username;
+		_realname = rhs._realname;
+		
+		return *this;
+	}
+
 	Client() {};
 
 	~Client() {};
 };
+
+
 
 #endif

@@ -30,9 +30,9 @@ typedef struct sockaddr SOCKADDR;
 #define CHAN_MODE_AVAILABLE ""
 
 #define MAX_CLIENTS 1024
-#define MAX_CLIENTS_CHAN 10
-
-#define MAX_CURRENT_CHAN 5
+#define MAX_OCCUPANTS_CHAN 16
+#define MAX_CURRENT_CHAN 8
+#define MAX_SERV_CHAN 256
 
 
 #define CLIENT_SOCKET _clients[i].getClientSocket()
@@ -57,6 +57,13 @@ typedef struct sockaddr SOCKADDR;
 #define ERR_NICKCOLLISION_BUILDER(nick) ("436 * " + nick + " :Nickname collision" + CRLF)
 #define ERR_NICKNAMEINUSE_BUILDER(nickname) ("433 * " + nickname + " :Nickname is already in use" + CRLF)
 #define ERR_ERRONEOUSNICKNAME_BUILDER(nickname) ("432 * " + nickname + " :Erroneous nickname" + CRLF)
+
+//JOIN
+#define ERR_NOSUCHCHANNEL_BUILDER(channel) ("403 * " + channel + " :No such channel" + CRLF)
+#define ERR_TOOMANYCHANNELS_BUILDER(channel) ("405 * " + channel + " :You have joined too many channels" + CRLF)
+#define ERR_CHANNELISFULL_BUILDER(channel) ("471 * " + channel + " :Cannot join channel (+l)" + CRLF)
+#define ERR_BADCHANNELKEY_BUILDER(channel) ("475 * " + channel + " :Cannot join channel (+k)" + CRLF)
+
 
 //QUIT
 #define ERR_QUIT_BUILDER(ip) ("ERROR :Closing link: " + ip + "(Client Quit)" + CRLF)
@@ -118,6 +125,10 @@ namespace Exception {
 		IRC_EXCEPTION_CUSTOM(ERR_NICKCOLLISION, ERR_NICKCOLLISION_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_ERRONEOUSNICKNAME, ERR_ERRONEOUSNICKNAME_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NICKNAMEINUSE, ERR_NICKNAMEINUSE_BUILDER)
+		IRC_EXCEPTION_CUSTOM(ERR_BADCHANNELKEY, ERR_BADCHANNELKEY_BUILDER)
+		IRC_EXCEPTION_CUSTOM(ERR_CHANNELISFULL, ERR_CHANNELISFULL_BUILDER)
+		IRC_EXCEPTION_CUSTOM(ERR_TOOMANYCHANNELS, ERR_TOOMANYCHANNELS_BUILDER)
+		IRC_EXCEPTION_CUSTOM(ERR_NOSUCHCHANNEL, ERR_NOSUCHCHANNEL_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_QUIT, ERR_QUIT_BUILDER)
 };
 
