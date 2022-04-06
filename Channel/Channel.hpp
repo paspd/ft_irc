@@ -4,6 +4,8 @@
 #include "../Rand.hpp"
 #include "../Client/Client.hpp"
 
+// class Client;
+
 class Channel
 {
 private:
