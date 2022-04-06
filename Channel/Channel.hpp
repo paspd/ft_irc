@@ -2,7 +2,7 @@
 #define CHANNEL_HPP
 
 #include "../Rand.hpp"
-// #include "../Client/Client.hpp"
+#include "../Client/Client.hpp"
 
 // class Client;
 
