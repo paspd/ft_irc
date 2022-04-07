@@ -1,8 +1,8 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "../Client/Client.hpp"
 #include "../Channel/Channel.hpp"
+// #include "../Client/Client.hpp"
 #include "../Rand.hpp"
 
 class Server
@@ -13,6 +13,7 @@ private:
 	SOCKLEN_T _masterAddressLength;
 	int _port;
 	std::vector<Client> _clients;
+	std::vector<Channel> _channels;
 	std::string _password;
 	fd_set _socketDescriptor;
 	SOCKET _maxSocket;
@@ -22,6 +23,7 @@ public:
 	Server(int port, char* password): _port(port), _password(password) {
 		try {
 		_clients.reserve(MAX_CLIENTS);
+		_channels.reserve(MAX_SERV_CHAN);
 		cleanClientsList();
 		createMasterSocket();
 		bindMasterSocket();
@@ -63,6 +65,12 @@ public:
 	void cleanClientsList() {
 		for (int i = 0; i < MAX_CLIENTS; i++) {
 			_clients[i].resetClient();
+		}
+	}
+
+	void cleanChannelsList() {
+		for (size_t i = 0; i < MAX_SERV_CHAN; i++) {
+			_channels[i].resetChannel();
 		}
 	}
 
@@ -128,11 +136,12 @@ public:
 					_clients[i].resetClient();
 				}
 				else {
-					// buffer[retread++] = ' ';
 					buffer[retread] = '\0';
 					std::string str_buffer = buffer;
 					std::string separator = " \t\v\r\n";
 					std::vector<std::string> command = _split(buffer, separator);
+					Client tmp;
+					tmp.getClientAddress();
 					if (!command.size())
 						return ;
 					std::cout << "Client number " << i << " has send a message : ";
@@ -179,12 +188,31 @@ public:
 
 						_clients[i].setClientUsername(command[1]);
 						_clients[i].setClientMode(std::atoi(command[2].c_str()));
-						_clients[i].setClientRealname(_catArguments(command.begin() + 4, command.end()));
+						_clients[i].setClientRealname(_strcatArguments(command.begin() + 4, command.end()));
 						_clients[i].userBoolClient();
 
 						std::cout << "Client number " << i << " has been change his username to : " << _clients[i].getClientUsername() << ", his mode to :" << _clients[i].getClientMode() << " and his realname to :" << _clients[i].getClientRealname() << std::endl;
 					}
-					else if (command[0] == "JOIN") { }
+					else if (command[0] == "JOIN") {
+						_clients[i].welcomeBoolClient();
+						if (!_clients[i].getWelcomeBool()) throw Exception::ERR_RESTRICTED();
+						if (!(command.size() >= 2 && command.size() <= 3)) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
+
+						std::vector<std::string> chanName = _split(command[1], ",");
+						std::vector<std::string> chanPass;
+						if (command.size() == 3)
+							chanPass = _split(command[2], ",");
+
+						for (size_t j = 0; j < chanName.size(); j++)
+						{
+							if (!_channelExist(chanName[j]))
+								if (!_createChannel(chanName[j], (chanName.size() <= chanPass.size() ? chanPass[j] : NULL))) throw Exception::ERR_NOSUCHCHANNEL(chanName[j]);
+							for (size_t k = 0; k < MAX_SERV_CHAN; k++) {
+								if (_channels[k].getCreated() && _channels[k].getChannelName() == chanName[j])
+									_channels[k].connectToChan(_clients[i], (chanName.size() <= chanPass.size() ? chanPass[j] : NULL));
+							}
+						}
+					}
 					else if (command[0] == "MSG") { }
 					else if (command[0] == "PRIVMSG") {
 
@@ -243,7 +271,7 @@ private:
 		return output;
 	}
 
-	std::string	_catArguments(std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end) {
+	std::string	_strcatArguments(std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end) {
 		std::stringstream ss;
 
 		while (begin != end) {
@@ -255,7 +283,25 @@ private:
 		return ss.str();
 	}
 
-	
+	bool _createChannel(std::string name, std::string password = NULL) {
+		for (size_t i = 0; i < MAX_SERV_CHAN; i++) {
+			if (!_channels[i].getCreated()) {
+				_channels[i].setChannel(name, password);
+				return true;
+			}
+			if (i == MAX_SERV_CHAN - 1)
+				return false;
+		}
+	}
+
+	bool _channelExist(std::string name) {
+		for (size_t i = 0; i < MAX_SERV_CHAN; i++) {
+			if (!_channels[i].getCreated())
+				if (_channels[i].getChannelName() == name)
+					return true;
+		}
+		return false;
+	}
 
 
 
