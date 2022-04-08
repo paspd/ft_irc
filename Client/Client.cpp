@@ -1,5 +1,9 @@
 #include "Client.hpp"
 
+Channel *Client::getCurrentChannel(int i) const {
+	return _currentChannels[i];
+}
+
 int Client::getClientSocket() const {
 	return _clientSocket;
 }
@@ -79,6 +83,7 @@ void Client::resetClient() {
 	_nickname.erase();
 	_username.erase();
 	_realname.erase();
+	_cleanCurrentList();
 }
 
 void Client::passBoolClient() {
@@ -97,10 +102,12 @@ void Client::welcomeBoolClient() {
 	_welcomeBool = true;
 }
 
-bool Client::addChannel(Channel const &channel) {
+bool Client::addChannel(Channel *channel) {
+	if (_checkConnected(channel))
+		return true;
 	for (size_t i = 0; i < MAX_CURRENT_CHAN; i++)
 	{
-		if (!_currentChannels[i].getCreated()) {
+		if (_currentChannels[i] == NULL) {
 			_currentChannels[i] = channel;
 			return true;
 		}
@@ -131,3 +138,26 @@ Client &Client::operator=(Client const &rhs) {
 Client::Client() {};
 
 Client::~Client() {};
+
+void Client::_cleanCurrentList() {
+	for (size_t i = 0; i < MAX_CURRENT_CHAN; i++) {
+		_currentChannels[i] = NULL;
+	}
+}
+
+bool Client::_checkConnected(Channel *channel) {
+	for (size_t i = 0; i < MAX_CURRENT_CHAN; i++) {
+		if (_currentChannels[i] && _currentChannels[i] == channel)
+			return true;
+	}
+	return false;
+}
+
+std::ostream &	operator<<(std::ostream & o, Client const & rhs) {
+	o << "nickname :" << rhs.getClientNickname() << ", username :" << rhs.getClientUsername() << ", realname :" << rhs.getClientRealname() << std::endl;
+	for (size_t i = 0; i < MAX_CURRENT_CHAN; i++) {
+		if (rhs.getCurrentChannel(i) != NULL)
+			o << "channel number " << i << " name :" << rhs.getCurrentChannel(i)->getChannelName() << " password :" << rhs.getCurrentChannel(i)->getChannelPassword() << std::endl;
+	}
+	return o;
+}

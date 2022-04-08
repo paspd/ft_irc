@@ -11,32 +11,31 @@ private:
 	std::string _channelName;
 	std::string _channelPassword;
 
-	std::vector<Client> _channelOccupants;
-
-	bool _created;
+	Client *_channelOccupants[MAX_OCCUPANTS_CHAN];
 
 public:
-	Channel &operator=(Channel const &rhs);
+	Channel &operator=(Channel &rhs);
 
 	Channel();
 	~Channel();
-
-	bool getCreated();
 
 	std::string getChannelName() const;
 
 	void resetChannel();
 
 	void setChannel(std::string name, std::string password);
+	
+	std::string getChannelPassword();
 
-	void connectToChan(Client &newOccupant, std::string password);
+	void connectToChan(Client *newOccupant, std::string password);
+
+	void delOccupant(Client const *newOccupant);
 
 private:
 	void _cleanChannelOccupants();
 
-	bool _addOccupant(Client const &newOccupant);
+	bool _addOccupant(Client *newOccupant);
 
-	void _delOccupant(Client const &newOccupant);
 
 };
 

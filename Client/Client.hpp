@@ -25,10 +25,12 @@ private:
 	std::string _username;
 	std::string _realname;
 
-	std::vector<Channel> _currentChannels;
+	Channel *_currentChannels[MAX_CURRENT_CHAN];
 
 public:
 	
+	Channel *getCurrentChannel(int i) const;
+
 	int getClientSocket() const;
 
 	int getClientMode() const;
@@ -71,15 +73,21 @@ public:
 
 	void welcomeBoolClient();
 
-	bool addChannel(Channel const &channel);
+	bool addChannel(Channel *channel);
 
 	Client &operator=(Client const &rhs);
 
 	Client();
 
 	~Client();
+
+private:
+
+	void _cleanCurrentList();
+
+	bool _checkConnected(Channel *channel) {
 };
 
-
+std::ostream &	operator<<(std::ostream & o, Client const & rhs);
 
 #endif

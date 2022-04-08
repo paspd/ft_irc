@@ -29,7 +29,7 @@ public:
 
 
 
-	void createMasterSocket(void);
+	void createMasterSocket();
 
 	void bindMasterSocket();
 

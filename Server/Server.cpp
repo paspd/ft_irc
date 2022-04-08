@@ -18,7 +18,7 @@ Server::Server(int port, char* password): _port(port), _password(password) {
 
 Server::~Server() {}
 
-void Server::createMasterSocket(void) {
+void Server::createMasterSocket() {
 	if((_masterSocket = socket(AF_INET , SOCK_STREAM , 0)) == 0)
 		throw Exception::MasterSocketCreationFailed();
 
@@ -68,7 +68,7 @@ void Server::resetSocketDescriptor() {
 
 	_maxSocket = _masterSocket;
 
-	for (int i = 0; i < MAX_CLIENTS; i++) {
+	for (int actualClient = 0; actualClient < MAX_CLIENTS; actualClient++) {
 		int s = CLIENT_SOCKET;
 		if (s)
 			FD_SET(s, &_socketDescriptor);
@@ -91,11 +91,11 @@ void Server::checkServerActivity() {
 			throw Exception::AcceptFailed();
 			//err server full
 		std::cout << "New connection at socket number " << new_socket << ", ip is : " << inet_ntoa(new_address.sin_addr) << ", port : " << ntohs(new_address.sin_port) << std::endl;
-		for (int i = 0; i < MAX_CLIENTS; i++) {
+		for (int actualClient = 0; actualClient < MAX_CLIENTS; actualClient++) {
 			if (CLIENT_SOCKET == 0) {
-				_clients[i].setClientSocket(new_socket);
-				_clients[i].setClientAddress(new_address);
-				std::cout << "Adding of new client at number: " << i << std::endl;
+				_clients[actualClient].setClientSocket(new_socket);
+				_clients[actualClient].setClientAddress(new_address);
+				std::cout << "Adding of new client at number: " << actualClient << std::endl;
 				break ;
 			}
 		}
@@ -103,14 +103,14 @@ void Server::checkServerActivity() {
 }
 
 void Server::checkClientActivity() {
-	for (int i = 0; i < MAX_CLIENTS; i++) {
+	for (int actualClient = 0; actualClient < MAX_CLIENTS; actualClient++) {
 		int s = CLIENT_SOCKET;
 		if (FD_ISSET(s, &_socketDescriptor)) {
 			int retread;
 			if ((retread = read(s, buffer, 2048)) == 0) {
-				std::cout << "Host disconected, ip is : " << inet_ntoa(_clients[i].getClientAddress().sin_addr) << ", port : " << ntohs(_clients[i].getClientAddress().sin_port) << std::endl;
+				std::cout << "Host disconected, ip is : " << inet_ntoa(_clients[actualClient].getClientAddress().sin_addr) << ", port : " << ntohs(_clients[actualClient].getClientAddress().sin_port) << std::endl;
 				close(s);
-				_clients[i].resetClient();
+				_clients[actualClient].resetClient();
 			}
 			else {
 				buffer[retread] = '\0';
@@ -121,7 +121,7 @@ void Server::checkClientActivity() {
 				tmp.getClientAddress();
 				if (!command.size())
 					return ;
-				std::cout << "Client number " << i << " has send a message : ";
+				std::cout << "Client number " << actualClient << " has send a message : ";
 				for (size_t i = 0; i < command.size(); i++) {
 					std::cout << command[i] << " ";
 				}
@@ -130,19 +130,19 @@ void Server::checkClientActivity() {
 				try {
 
 				if (command[0] == "PASS") {
-					if (_clients[i].getPassBool()) throw Exception::ERR_ALREADYREGISTERED();
+					if (_clients[actualClient].getPassBool()) throw Exception::ERR_ALREADYREGISTERED();
 					if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 					if (command.size() == 2 && command[1] != _password) throw Exception::ERR_PASSWDMISMATCH();
 
-					_clients[i].passBoolClient();
-					std::cout << "Client number " << i << " has been accepted." << std::endl;
+					_clients[actualClient].passBoolClient();
+					std::cout << "Client number " << actualClient << " has been accepted." << std::endl;
 				}
 				else if (command[0] == "NICK") {
-					if (!_clients[i].getPassBool()) throw Exception::ERR_NOTREGISTERED();
+					if (!_clients[actualClient].getPassBool()) throw Exception::ERR_NOTREGISTERED();
 					if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 					if (command.size() > 3) throw Exception::ERR_NONICKNAMEGIVEN();
 					if (!_checkValidityNick(command[1])) throw Exception::ERR_ERRONEOUSNICKNAME(command[1]);
-					if (command[1] == _clients[i].getClientNickname()) throw Exception::ERR_NICKNAMEINUSE(command[1]);
+					if (command[1] == _clients[actualClient].getClientNickname()) throw Exception::ERR_NICKNAMEINUSE(command[1]);
 
 					else {
 						for (size_t j = 0; j < MAX_CLIENTS; j++) {
@@ -151,28 +151,28 @@ void Server::checkClientActivity() {
 								break ;
 							}
 							else if (j == MAX_CLIENTS - 1) {
-								_clients[i].setClientNickname(command[1]);
-								_clients[i].nickBoolClient();
-								std::cout << "Client number " << i << " has been change his nickname to : " << _clients[i].getClientNickname() << "." << std::endl;
+								_clients[actualClient].setClientNickname(command[1]);
+								_clients[actualClient].nickBoolClient();
+								std::cout << "Client number " << actualClient << " has been change his nickname to : " << _clients[actualClient].getClientNickname() << "." << std::endl;
 							}
 						}
 					}
 				}
 				else if (command[0] == "USER") {
-					if (!_clients[i].getPassBool()) throw Exception::ERR_NOTREGISTERED();
-					if (_clients[i].getUserBool()) throw Exception::ERR_ALREADYREGISTERED();
+					if (!_clients[actualClient].getPassBool()) throw Exception::ERR_NOTREGISTERED();
+					if (_clients[actualClient].getUserBool()) throw Exception::ERR_ALREADYREGISTERED();
 					if (command.size() < 5) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 
-					_clients[i].setClientUsername(command[1]);
-					_clients[i].setClientMode(std::atoi(command[2].c_str()));
-					_clients[i].setClientRealname(_strcatArguments(command.begin() + 4, command.end()));
-					_clients[i].userBoolClient();
+					_clients[actualClient].setClientUsername(command[1]);
+					_clients[actualClient].setClientMode(std::atoi(command[2].c_str()));
+					_clients[actualClient].setClientRealname(_strcatArguments(command.begin() + 4, command.end()));
+					_clients[actualClient].userBoolClient();
 
-					std::cout << "Client number " << i << " has been change his username to : " << _clients[i].getClientUsername() << ", his mode to :" << _clients[i].getClientMode() << " and his realname to :" << _clients[i].getClientRealname() << std::endl;
+					std::cout << "Client number " << actualClient << " has been change his username to : " << _clients[actualClient].getClientUsername() << ", his mode to :" << _clients[actualClient].getClientMode() << " and his realname to :" << _clients[actualClient].getClientRealname() << std::endl;
 				}
 				else if (command[0] == "JOIN") {
-					_clients[i].welcomeBoolClient();
-					if (!_clients[i].getWelcomeBool()) throw Exception::ERR_RESTRICTED();
+					_clients[actualClient].welcomeBoolClient();
+					if (!_clients[actualClient].getWelcomeBool()) throw Exception::ERR_RESTRICTED();
 					if (!(command.size() >= 2 && command.size() <= 3)) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 
 					std::vector<std::string> chanName = _split(command[1], ",");
@@ -180,14 +180,21 @@ void Server::checkClientActivity() {
 					if (command.size() == 3)
 						chanPass = _split(command[2], ",");
 
+					std::cout << chanName.size() << std::endl;
 					for (size_t j = 0; j < chanName.size(); j++)
 					{
 						if (!_channelExist(chanName[j]))
-							if (!_createChannel(chanName[j], (chanName.size() <= chanPass.size() ? chanPass[j] : NULL))) throw Exception::ERR_NOSUCHCHANNEL(chanName[j]);
+							if (!_createChannel(chanName[j], (chanPass.size() >= j && command.size() == 3 ? chanPass[j] : ""))) throw Exception::ERR_NOSUCHCHANNEL(chanName[j]);
 						for (size_t k = 0; k < MAX_SERV_CHAN; k++) {
-							if (_channels[k].getCreated() && _channels[k].getChannelName() == chanName[j])
-								_channels[k].connectToChan(_clients[i], (chanName.size() <= chanPass.size() ? chanPass[j] : NULL));
+							if (_channels[k].getChannelName().size() && _channels[k].getChannelName() == chanName[j]) {
+								_channels[k].connectToChan(&_clients[actualClient], (chanPass.size() >= j && command.size() == 3 ? chanPass[j] : ""));
+								if (!_clients[actualClient].addChannel(&_channels[k])){
+									_channels[k].delOccupant(&_clients[actualClient]);
+									throw Exception::ERR_TOOMANYCHANNELS(_channels[k].getChannelName());
+								}
+							}
 						}
+						std::cout << _clients[actualClient];
 					}
 				}
 				else if (command[0] == "MSG") { }
@@ -197,15 +204,16 @@ void Server::checkClientActivity() {
 
 				}
 				else if (command[0] == "QUIT") {
-					throw Exception::ERR_QUIT(inet_ntoa(_clients[i].getClientAddress().sin_addr));
+					exit(0);
+					throw Exception::ERR_QUIT(inet_ntoa(_clients[actualClient].getClientAddress().sin_addr));
 				}
 				else throw Exception::ERR_UNKNOWNCOMMAND(command[0]);
-				if (!_clients[i].getWelcomeBool() && _clients[i].getPassBool() && _clients[i].getNickBool() && _clients[i].getUserBool()) {
-					sendMessage(CLIENT_SOCKET, RPL_WELCOME(_clients[i].getClientNickname(), _clients[i].getClientUsername(), inet_ntoa(_clients[i].getClientAddress().sin_addr)));
+				if (!_clients[actualClient].getWelcomeBool() && _clients[actualClient].getPassBool() && _clients[actualClient].getNickBool() && _clients[actualClient].getUserBool()) {
+					sendMessage(CLIENT_SOCKET, RPL_WELCOME(_clients[actualClient].getClientNickname(), _clients[actualClient].getClientUsername(), inet_ntoa(_clients[actualClient].getClientAddress().sin_addr)));
 					sendMessage(CLIENT_SOCKET, RPL_YOURHOST);
 					sendMessage(CLIENT_SOCKET, RPL_CREATED);
 					sendMessage(CLIENT_SOCKET, RPL_MYINFO);
-					_clients[i].welcomeBoolClient();
+					_clients[actualClient].welcomeBoolClient();
 				}
 				}
 				catch (Exception::ERR_QUIT &e) {
@@ -258,9 +266,9 @@ std::string	Server::_strcatArguments(std::vector<std::string>::iterator begin, s
 	return ss.str();
 }
 
-bool Server::_createChannel(std::string name, std::string password = NULL) {
+bool Server::_createChannel(std::string name, std::string password) {
 	for (size_t i = 0; i < MAX_SERV_CHAN; i++) {
-		if (!_channels[i].getCreated()) {
+		if (!_channels[i].getChannelName().size()) {
 			_channels[i].setChannel(name, password);
 			return true;
 		}
@@ -272,9 +280,11 @@ bool Server::_createChannel(std::string name, std::string password = NULL) {
 
 bool Server::_channelExist(std::string name) {
 	for (size_t i = 0; i < MAX_SERV_CHAN; i++) {
-		if (!_channels[i].getCreated())
+
+		if (_channels[i].getChannelName().size())
 			if (_channels[i].getChannelName() == name)
 				return true;
 	}
+	std::cout << "test 2" << std::endl;
 	return false;
 }
