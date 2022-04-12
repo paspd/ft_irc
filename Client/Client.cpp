@@ -105,14 +105,21 @@ void Client::welcomeBoolClient() {
 bool Client::addChannel(Channel *channel) {
 	for (size_t i = 0; i < MAX_CURRENT_CHAN; i++)
 	{
-		if (_currentChannels[i] == NULL) {
+		if (_currentChannels[i] == NULL || _currentChannels[i]->getChannelName().empty()) {
 			_currentChannels[i] = channel;
 			return true;
 		}
-		if (i == MAX_CURRENT_CHAN - 1)
-			return false;
 	}
 	return false;
+}
+
+void Client::leaveChannel(std::string channelName) {
+	for (size_t i = 0; i < MAX_CURRENT_CHAN; i++)
+	{
+		if (_currentChannels[i] != NULL && _currentChannels[i]->getChannelName() == channelName) {
+			_currentChannels[i] = NULL;
+		}
+	}
 }
 
 void Client::leaveAllChannels() {
@@ -123,7 +130,6 @@ void Client::leaveAllChannels() {
 			_currentChannels[i] = NULL;
 		}
 	}
-	
 }
 
 Client &Client::operator=(Client const &rhs) {

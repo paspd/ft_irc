@@ -6,6 +6,7 @@ Channel &Channel::operator=(Channel &rhs) {
 
 	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
 		_channelOccupants[i] = rhs._channelOccupants[i];
+		_channelOccupantsMode[i] = rhs._channelOccupantsMode[i];
 	}
 	
 	return *this;
@@ -27,7 +28,7 @@ Client *Channel::getChannelOccupant(int i) const {
 	return _channelOccupants[i];
 }
 
-Mode *Channel::getChannelOccupantMode(int i) const {
+OccupantChannelMode Channel::getChannelOccupantMode(int i) const {
 	return _channelOccupantsMode[i];
 }
 
@@ -59,6 +60,7 @@ void Channel::connectToChan(Client *newOccupant, std::string password) {
 void Channel::_cleanChannelOccupants() {
 	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
 		_channelOccupants[i] = NULL;
+		_channelOccupantsMode[i].reset();
 	}
 };
 
@@ -66,6 +68,8 @@ bool Channel::_addOccupant(Client *newOccupant) {
 	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++)
 	{
 		if (_channelOccupants[i] == NULL) {
+			if (!checkIfClient())
+				_channelOccupantsMode[i].setCreator(true);
 			_channelOccupants[i] = newOccupant;
 			return true;
 		}
@@ -80,8 +84,10 @@ void Channel::delOccupant(int const socket) {
 	{
 		if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientSocket() == socket) {
 			_channelOccupants[i] = NULL;
+			return ;
 		}
 	}
+	throw Exception::ERR_NOTONCHANNEL(_channelName);
 };
 
 bool Channel::checkIfClient() {
@@ -92,12 +98,34 @@ bool Channel::checkIfClient() {
 	return false;
 }
 
+void Channel::sendToAllChannel(int const &socketSender, std::string const &msg) {
+	int msgSize = msg.length();
+	ssize_t ret_send = 0;
+	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
+		if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientSocket() && _channelOccupants[i]->getClientSocket() != socketSender) {
+			ret_send = send(_channelOccupants[i]->getClientSocket(), msg.c_str(), msgSize, 0);
+			if (ret_send != (ssize_t)msgSize)
+				throw Exception::SendFailed();
+		}
+	}
+	
+}
+
+std::string Channel::getStrOccupant() {
+	std::stringstream ss;
+	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
+		if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientSocket())
+		ss << (i != 0 ? " " : "") << (_channelOccupantsMode[i].getCreator() ? "@" : "") << _channelOccupants[i]->getClientNickname();
+	}
+	return ss.str();
+}
+
 
 std::ostream &	operator<<(std::ostream & o, Channel const & rhs) {
 	o << "channel name :" << rhs.getChannelName() << ", password :" << rhs.getChannelPassword() << std::endl;
 	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
 		if (rhs.getChannelOccupant(i) != NULL && rhs.getChannelOccupant(i)->getClientSocket())
-			o << "client number " << i << " socket :" << rhs.getChannelOccupant(i)->getClientSocket() << " username :" << rhs.getChannelOccupant(i)->getClientUsername() << std::endl;
+			o << "client number " << i << " socket :" << rhs.getChannelOccupant(i)->getClientSocket() << " username :" << rhs.getChannelOccupant(i)->getClientUsername() << (rhs.getChannelOccupantMode(i).getCreator() ? " is creator of channel." : "") << std::endl;
 	}
 	return o;
 }

@@ -59,7 +59,7 @@ private:
 
 	bool _createChannel(std::string name, std::string password);
 
-	bool _channelExist(std::string name);
+	int _channelExist(std::string name);
 
 	void _checkClientInChannel();
 

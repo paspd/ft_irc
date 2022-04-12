@@ -77,6 +77,8 @@ public:
 
 	void leaveAllChannels();
 
+	void leaveChannel(std::string channelName);
+	
 	bool checkConnected(Channel *channel);
 
 	Client &operator=(Client const &rhs);

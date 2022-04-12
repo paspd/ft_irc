@@ -5,7 +5,7 @@
 // #include "../Mode/Mode.hpp"
 
 class Client;
-class Mode;
+class OccupantChannelMode;
 
 class Channel
 {
@@ -16,7 +16,7 @@ private:
 	std::string _channelTopic;
 
 	Client *_channelOccupants[MAX_OCCUPANTS_CHAN];
-	Mode *_channelOccupantsMode[MAX_OCCUPANTS_CHAN];
+	OccupantChannelMode _channelOccupantsMode[MAX_OCCUPANTS_CHAN];
 
 public:
 	Channel &operator=(Channel &rhs);
@@ -32,7 +32,7 @@ public:
 
 	Client *getChannelOccupant(int i) const;
 
-	Mode *getChannelOccupantMode(int i) const;
+	OccupantChannelMode getChannelOccupantMode(int i) const;
 
 	void resetChannel();
 
@@ -44,7 +44,11 @@ public:
 
 	void delOccupant(int const socket);
 
+	void sendToAllChannel(int const &socketSender, std::string const &msg);
+
 	bool checkIfClient();
+
+	std::string getStrOccupant();
 
 private:
 	void _cleanChannelOccupants();

@@ -1,9 +1,62 @@
-Listening on port 3 ...
-New connection at socket number 4, ip is : 127.0.0.1, port : 58760
+Listening on port 1 ...
+New connection at socket number 4, ip is : 127.0.0.1, port : 64317
 Adding of new client at number: 0
 All channels in server :
 
 All clients in server :
 _clients[0] :
+nickname :, username :, realname :
+
+Client number 0 has send a message : JOIN #a 
+All channels in server :
+_channels[0] :
+channel name :#a, password :
+client number 0 socket :4 username : is creator of channel.
+
+All clients in server :
+_clients[0] :
+nickname :, username :, realname :
+channel number 0 name :#a password :
+
+New connection at socket number 5, ip is : 127.0.0.1, port : 64318
+Adding of new client at number: 1
+All channels in server :
+_channels[0] :
+channel name :#a, password :
+client number 0 socket :4 username : is creator of channel.
+
+All clients in server :
+_clients[0] :
+nickname :, username :, realname :
+channel number 0 name :#a password :
+_clients[1] :
+nickname :, username :, realname :
+
+Client number 1 has send a message : JOIN #a 
+All channels in server :
+_channels[0] :
+channel name :#a, password :
+client number 0 socket :4 username : is creator of channel.
+client number 1 socket :5 username :
+
+All clients in server :
+_clients[0] :
+nickname :, username :, realname :
+channel number 0 name :#a password :
+_clients[1] :
+nickname :, username :, realname :
+channel number 0 name :#a password :
+
+Client number 1 has send a message : PART #a j 
+All channels in server :
+_channels[0] :
+channel name :#a, password :
+client number 0 socket :4 username : is creator of channel.
+
+All clients in server :
+_clients[0] :
+nickname :, username :, realname :
+channel number 0 name :#a password :
+_clients[1] :
 nickname :, username :, realname :
 
