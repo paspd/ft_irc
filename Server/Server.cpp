@@ -58,6 +58,9 @@ void Server::acceptConnection() {
 		checkActivity();
 		checkServerActivity();
 		checkClientActivity();
+		_checkClientInChannel();
+		_affAllChannels();
+		_affAllClients();
 	}
 }
 
@@ -175,39 +178,49 @@ void Server::checkClientActivity() {
 					if (!_clients[actualClient].getWelcomeBool()) throw Exception::ERR_RESTRICTED();
 					if (!(command.size() >= 2 && command.size() <= 3)) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 
+					if (command.size() == 2 && command[1] == "0") {
+						_clients[actualClient].leaveAllChannels();
+						return ;
+					}
+
 					std::vector<std::string> chanName = _split(command[1], ",");
 					std::vector<std::string> chanPass;
 					if (command.size() == 3)
 						chanPass = _split(command[2], ",");
 
-					std::cout << chanName.size() << std::endl;
 					for (size_t j = 0; j < chanName.size(); j++)
 					{
 						if (!_channelExist(chanName[j]))
-							if (!_createChannel(chanName[j], (chanPass.size() >= j && command.size() == 3 ? chanPass[j] : ""))) throw Exception::ERR_NOSUCHCHANNEL(chanName[j]);
+							if (chanName[0].find_first_of("#!&+") > 0 || (!_createChannel(chanName[j], (chanPass.size() >= j && command.size() == 3 ? chanPass[j] : "")))) throw Exception::ERR_NOSUCHCHANNEL(chanName[j]);
 						for (size_t k = 0; k < MAX_SERV_CHAN; k++) {
 							if (_channels[k].getChannelName().size() && _channels[k].getChannelName() == chanName[j]) {
+								if (_clients[actualClient].checkConnected(&_channels[k]))
+									break ;
 								_channels[k].connectToChan(&_clients[actualClient], (chanPass.size() >= j && command.size() == 3 ? chanPass[j] : ""));
 								if (!_clients[actualClient].addChannel(&_channels[k])){
-									_channels[k].delOccupant(&_clients[actualClient]);
-									throw Exception::ERR_TOOMANYCHANNELS(_channels[k].getChannelName());
+									_channels[k].delOccupant(_clients[actualClient].getClientSocket());
+									throw Exception::ERR_TOOMANYCHANNELS(chanName[j]);
 								}
+								else {
+								sendMessage(CLIENT_SOCKET, _createClientPrompt(_clients[actualClient]) + " JOIN " + _channels[k].getChannelName() + CRLF);
+								sendMessage(CLIENT_SOCKET, RPL_CHAN_MODE(_channels[k].getChannelName()));
+								if (!_channels[k].getChannelTopic().empty())
+									sendMessage(CLIENT_SOCKET, RPL_TOPIC(_channels[k].getChannelName(), _channels[k].getChannelTopic()));
+								else
+									sendMessage(CLIENT_SOCKET, RPL_NOTOPIC(_channels[k].getChannelName()));
+								}
+								
 							}
 						}
-						std::cout << _clients[actualClient];
 					}
 				}
-				else if (command[0] == "MSG") { }
-				else if (command[0] == "PRIVMSG") {
-
-
-
-				}
+				else if (command[0] == "MSG") {  }
+				else if (command[0] == "PRIVMSG") { }
 				else if (command[0] == "QUIT") {
 					exit(0);
 					throw Exception::ERR_QUIT(inet_ntoa(_clients[actualClient].getClientAddress().sin_addr));
 				}
-				else throw Exception::ERR_UNKNOWNCOMMAND(command[0]);
+				else throw Exception::ERR_UNKNOWNCOMMAND(command[0]);	
 				if (!_clients[actualClient].getWelcomeBool() && _clients[actualClient].getPassBool() && _clients[actualClient].getNickBool() && _clients[actualClient].getUserBool()) {
 					sendMessage(CLIENT_SOCKET, RPL_WELCOME(_clients[actualClient].getClientNickname(), _clients[actualClient].getClientUsername(), inet_ntoa(_clients[actualClient].getClientAddress().sin_addr)));
 					sendMessage(CLIENT_SOCKET, RPL_YOURHOST);
@@ -285,6 +298,38 @@ bool Server::_channelExist(std::string name) {
 			if (_channels[i].getChannelName() == name)
 				return true;
 	}
-	std::cout << "test 2" << std::endl;
 	return false;
+}
+
+void Server::_checkClientInChannel() {
+	for (size_t i = 0; i < MAX_SERV_CHAN; i++) {
+		if (!_channels[i].checkIfClient())
+			_channels[i].resetChannel();
+	}
+}
+
+void Server::_affAllClients() {
+	std::cout << "All clients in server :" << std::endl;
+	for (size_t i = 0; i < MAX_CLIENTS; i++)
+	{
+		if (_clients[i].getClientSocket())
+			std::cout << "_clients[" << i << "] :" << std::endl << _clients[i];
+	}
+	std::cout << std::endl;
+}
+
+void Server::_affAllChannels() {
+	std::cout << "All channels in server :" << std::endl;
+	for (size_t i = 0; i < MAX_SERV_CHAN; i++)
+	{
+		if (_channels[i].getChannelName().size())
+			std::cout << "_channels[" << i << "] :" << std::endl << _channels[i];
+	}
+	std::cout << std::endl;
+}
+
+std::string Server::_createClientPrompt(Client const &rhs) {
+	std::stringstream ss;
+	ss << ":" << rhs.getClientNickname() << "!~" << rhs.getClientUsername() << "@" << inet_ntoa(rhs.getClientAddress().sin_addr);
+	return ss.str();
 }

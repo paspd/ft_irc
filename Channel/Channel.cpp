@@ -19,9 +19,21 @@ std::string Channel::getChannelName() const {
 	return _channelName;
 };
 
-std::string Channel::getChannelPassword() {
+std::string Channel::getChannelPassword() const{
 	return _channelPassword;
 };
+
+Client *Channel::getChannelOccupant(int i) const {
+	return _channelOccupants[i];
+}
+
+Mode *Channel::getChannelOccupantMode(int i) const {
+	return _channelOccupantsMode[i];
+}
+
+std::string Channel::getChannelTopic() const {
+	return _channelTopic;
+}
 
 
 void Channel::resetChannel() {
@@ -35,9 +47,12 @@ void Channel::setChannel(std::string name, std::string password) {
 	_channelPassword = password;
 };
 
+void Channel::setChannelTopic(std::string channelTopic) {
+	_channelTopic = channelTopic;
+}
+
 void Channel::connectToChan(Client *newOccupant, std::string password) {
 	if (password != _channelPassword) throw Exception::ERR_BADCHANNELKEY(_channelName);
-	std::cout << "test" << std::endl;
 	if (!_addOccupant(newOccupant)) throw Exception::ERR_CHANNELISFULL(_channelName);
 };
 
@@ -60,10 +75,29 @@ bool Channel::_addOccupant(Client *newOccupant) {
 	return false;
 };
 
-void Channel::delOccupant(Client const *newOccupant) {
+void Channel::delOccupant(int const socket) {
 	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++)
 	{
-		if (_channelOccupants[i] == newOccupant)
+		if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientSocket() == socket) {
 			_channelOccupants[i] = NULL;
+		}
 	}
 };
+
+bool Channel::checkIfClient() {
+	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
+		if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientSocket())
+			return true;
+	}
+	return false;
+}
+
+
+std::ostream &	operator<<(std::ostream & o, Channel const & rhs) {
+	o << "channel name :" << rhs.getChannelName() << ", password :" << rhs.getChannelPassword() << std::endl;
+	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
+		if (rhs.getChannelOccupant(i) != NULL && rhs.getChannelOccupant(i)->getClientSocket())
+			o << "client number " << i << " socket :" << rhs.getChannelOccupant(i)->getClientSocket() << " username :" << rhs.getChannelOccupant(i)->getClientUsername() << std::endl;
+	}
+	return o;
+}

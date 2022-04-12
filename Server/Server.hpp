@@ -27,8 +27,6 @@ public:
 
 	~Server();
 
-
-
 	void createMasterSocket();
 
 	void bindMasterSocket();
@@ -63,6 +61,13 @@ private:
 
 	bool _channelExist(std::string name);
 
+	void _checkClientInChannel();
+
+	void _affAllChannels();
+	
+	void _affAllClients();
+
+	std::string _createClientPrompt(Client const &rhs);
 
 
 

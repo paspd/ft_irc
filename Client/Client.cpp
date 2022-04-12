@@ -103,8 +103,6 @@ void Client::welcomeBoolClient() {
 }
 
 bool Client::addChannel(Channel *channel) {
-	if (_checkConnected(channel))
-		return true;
 	for (size_t i = 0; i < MAX_CURRENT_CHAN; i++)
 	{
 		if (_currentChannels[i] == NULL) {
@@ -115,6 +113,17 @@ bool Client::addChannel(Channel *channel) {
 			return false;
 	}
 	return false;
+}
+
+void Client::leaveAllChannels() {
+	for (size_t i = 0; i < MAX_CURRENT_CHAN; i++)
+	{
+		if (_currentChannels[i] != NULL) {
+			_currentChannels[i]->delOccupant(_clientSocket);
+			_currentChannels[i] = NULL;
+		}
+	}
+	
 }
 
 Client &Client::operator=(Client const &rhs) {
@@ -145,9 +154,9 @@ void Client::_cleanCurrentList() {
 	}
 }
 
-bool Client::_checkConnected(Channel *channel) {
+bool Client::checkConnected(Channel *channel) {
 	for (size_t i = 0; i < MAX_CURRENT_CHAN; i++) {
-		if (_currentChannels[i] && _currentChannels[i] == channel)
+		if (_currentChannels[i] != NULL && _currentChannels[i]->getChannelName() == channel->getChannelName())
 			return true;
 	}
 	return false;

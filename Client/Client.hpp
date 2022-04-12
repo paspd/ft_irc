@@ -75,6 +75,10 @@ public:
 
 	bool addChannel(Channel *channel);
 
+	void leaveAllChannels();
+
+	bool checkConnected(Channel *channel);
+
 	Client &operator=(Client const &rhs);
 
 	Client();
@@ -85,7 +89,6 @@ private:
 
 	void _cleanCurrentList();
 
-	bool _checkConnected(Channel *channel) {
 };
 
 std::ostream &	operator<<(std::ostream & o, Client const & rhs);

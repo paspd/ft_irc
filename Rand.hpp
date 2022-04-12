@@ -21,7 +21,9 @@ typedef struct sockaddr_in SOCKADDR_IN;
 typedef socklen_t SOCKLEN_T;
 typedef struct sockaddr SOCKADDR;
 
-#define SERVER_NAME "IRC of ldauga"
+#define SERVER_NAME "serverIRC"
+#define SERVER_NAME_PROMPT (static_cast<std::string>(":") + static_cast<std::string>(SERVER_NAME))
+
 #define VERSION "v 0.0.0"
 #define CREATION_DATE "28.03.2022"
 
@@ -43,29 +45,32 @@ typedef struct sockaddr SOCKADDR;
 
 
 //WELCOME
-#define RPL_WELCOME(nick, user, host) ("001 Welcome to the Internet Relay Network " + nick + "!" + user + "@" + host + CRLF)
-#define RPL_YOURHOST (static_cast<std::string>("002 Your host is ") + static_cast<std::string>(SERVER_NAME) + static_cast<std::string>(", running version ") + static_cast<std::string>(VERSION) + static_cast<std::string>(CRLF))
-#define RPL_CREATED (static_cast<std::string>("003 This server was created ") + static_cast<std::string>(CREATION_DATE) + static_cast<std::string>(CRLF))
-#define RPL_MYINFO (static_cast<std::string>("004 ") + static_cast<std::string>(SERVER_NAME) + static_cast<std::string>(" ") + static_cast<std::string>(VERSION) + static_cast<std::string>(" ") + static_cast<std::string>(USER_MODE_AVAILABLE) + static_cast<std::string>(" ") + static_cast<std::string>(CHAN_MODE_AVAILABLE) + static_cast<std::string>(" ") + static_cast<std::string>(CRLF))
+#define RPL_WELCOME(nick, user, host) (SERVER_NAME_PROMPT + " 001 Welcome to the Internet Relay Network " + nick + "!" + user + "@" + host + CRLF)
+#define RPL_YOURHOST (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 002 Your host is ") + static_cast<std::string>(SERVER_NAME) + static_cast<std::string>(", running version ") + static_cast<std::string>(VERSION) + static_cast<std::string>(CRLF))
+#define RPL_CREATED (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 003 This server was created ") + static_cast<std::string>(CREATION_DATE) + static_cast<std::string>(CRLF))
+#define RPL_MYINFO (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 004 ") + static_cast<std::string>(SERVER_NAME) + static_cast<std::string>(" ") + static_cast<std::string>(VERSION) + static_cast<std::string>(" ") + static_cast<std::string>(USER_MODE_AVAILABLE) + static_cast<std::string>(" ") + static_cast<std::string>(CHAN_MODE_AVAILABLE) + static_cast<std::string>(" ") + static_cast<std::string>(CRLF))
 
 // GLOBAL
-#define ERR_UNKNOWNCOMMAND_BUILDER(command) ("421 * " + command + " :Unknown command" + CRLF)
-#define ERR_NEEDMOREPARAMS_BUILDER(command) ("461 * " + command + " :Not enough parameters" + CRLF)
+#define ERR_UNKNOWNCOMMAND_BUILDER(command) (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 421 * ") + static_cast<std::string>(command) + static_cast<std::string>(" :Unknown command") + static_cast<std::string>(CRLF))
+#define ERR_NEEDMOREPARAMS_BUILDER(command) (SERVER_NAME_PROMPT + " 461 * " + command + " :Not enough parameters" + CRLF)
 
 //NICK
-#define ERR_NICKCOLLISION_BUILDER(nick) ("436 * " + nick + " :Nickname collision" + CRLF)
-#define ERR_NICKNAMEINUSE_BUILDER(nickname) ("433 * " + nickname + " :Nickname is already in use" + CRLF)
-#define ERR_ERRONEOUSNICKNAME_BUILDER(nickname) ("432 * " + nickname + " :Erroneous nickname" + CRLF)
+#define ERR_NICKCOLLISION_BUILDER(nick) (SERVER_NAME_PROMPT + " 436 * " + nick + " :Nickname collision" + CRLF)
+#define ERR_NICKNAMEINUSE_BUILDER(nickname) (SERVER_NAME_PROMPT + " 433 * " + nickname + " :Nickname is already in use" + CRLF)
+#define ERR_ERRONEOUSNICKNAME_BUILDER(nickname) (SERVER_NAME_PROMPT + " 432 * " + nickname + " :Erroneous nickname" + CRLF)
 
 //JOIN
-#define ERR_NOSUCHCHANNEL_BUILDER(channel) ("403 * " + channel + " :No such channel" + CRLF)
-#define ERR_TOOMANYCHANNELS_BUILDER(channel) ("405 * " + channel + " :You have joined too many channels" + CRLF)
-#define ERR_CHANNELISFULL_BUILDER(channel) ("471 * " + channel + " :Cannot join channel (+l)" + CRLF)
-#define ERR_BADCHANNELKEY_BUILDER(channel) ("475 * " + channel + " :Cannot join channel (+k)" + CRLF)
+#define RPL_NOTOPIC(channel) (SERVER_NAME_PROMPT + " 331 * " + channel + " :No topic is set" + CRLF)
+#define RPL_CHAN_MODE(channel) (SERVER_NAME_PROMPT + " MODE " + channel + " " + CHAN_MODE_AVAILABLE + CRLF)
+#define RPL_TOPIC(channel, topic) (SERVER_NAME_PROMPT + " 332 * " + channel + " :" + topic + CRLF)
+#define ERR_NOSUCHCHANNEL_BUILDER(channel) (SERVER_NAME_PROMPT + " 403 * " + channel + " :No such channel" + CRLF)
+#define ERR_TOOMANYCHANNELS_BUILDER(channel) (SERVER_NAME_PROMPT + " 405 * " + channel + " :You have joined too many channels" + CRLF)
+#define ERR_CHANNELISFULL_BUILDER(channel) (SERVER_NAME_PROMPT + " 471 * " + channel + " :Cannot join channel (+l)" + CRLF)
+#define ERR_BADCHANNELKEY_BUILDER(channel) (SERVER_NAME_PROMPT + " 475 * " + channel + " :Cannot join channel (+k)" + CRLF)
 
 
 //QUIT
-#define ERR_QUIT_BUILDER(ip) ("ERROR :Closing link: " + ip + "(Client Quit)" + CRLF)
+#define ERR_QUIT_BUILDER(ip) (SERVER_NAME_PROMPT + " ERROR :Closing link: " + ip + "(Client Quit)" + CRLF)
 
 
 #define SERVER_EXCEPTION(name, function)																		\
@@ -73,7 +78,7 @@ class name : public std::exception {																			\
 		private:																								\
 			std::string exceptionMessageBuilder(const std::string &func, const std::string &message) const {	\
 				std::stringstream ss;																			\
-				ss << func << ": " << message << CRLF;																\
+				ss << func << ": " << message << CRLF;															\
 				return (ss.str());																				\
 			}																									\
 		public:																									\
@@ -87,7 +92,8 @@ class name : public std::exception {																			\
 class name : public std::exception {																			\
 		public:																									\
 			virtual const char* what() const throw() {															\
-				static std::string msg = message;																\
+				static std::string msg;																			\
+				msg = message;																					\
 				return (msg.c_str());																			\
 			}																									\
 };
@@ -99,7 +105,8 @@ class name : public std::exception {																			\
 		name(const std::string &param) : param(param) {}														\
 		~name() throw() {}																						\
 		virtual const char* what() const throw() {																\
-			static std::string msg = messageBuilder(param);														\
+			static std::string msg;																				\
+			msg = messageBuilder(param);																		\
 			return (msg.c_str());																				\
 		}																										\
 };
@@ -134,5 +141,6 @@ namespace Exception {
 #include "Server/Server.hpp"
 #include "Channel/Channel.hpp"
 #include "Client/Client.hpp"
+#include "Mode/Mode.hpp"
 
 #endif
