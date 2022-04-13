@@ -50,6 +50,10 @@ public:
 
 	std::string getStrOccupant();
 
+	OccupantChannelMode *getClientMode(Client const &rhs);
+
+	int checkClientConnected(Client const &rhs);
+
 private:
 	void _cleanChannelOccupants();
 

@@ -44,43 +44,30 @@ typedef struct sockaddr SOCKADDR;
 #define CRLF "\r\n"
 
 
-//WELCOME
 #define RPL_WELCOME(nickname, username, hostname) (SERVER_NAME_PROMPT + " 001 Welcome to the Internet Relay Network " + nickname + "!" + username + "@" + hostname + CRLF)
 #define RPL_YOURHOST (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 002 Your host is ") + static_cast<std::string>(SERVER_NAME) + static_cast<std::string>(", running version ") + static_cast<std::string>(VERSION) + static_cast<std::string>(CRLF))
 #define RPL_CREATED (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 003 This server was created ") + static_cast<std::string>(CREATION_DATE) + static_cast<std::string>(CRLF))
 #define RPL_MYINFO (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 004 ") + static_cast<std::string>(SERVER_NAME) + static_cast<std::string>(" ") + static_cast<std::string>(VERSION) + static_cast<std::string>(" ") + static_cast<std::string>(USER_MODE_AVAILABLE) + static_cast<std::string>(" ") + static_cast<std::string>(CHAN_MODE_AVAILABLE) + static_cast<std::string>(" ") + static_cast<std::string>(CRLF))
-
-// GLOBAL
-#define ERR_UNKNOWNCOMMAND_BUILDER(command) (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 421 * ") + static_cast<std::string>(command) + static_cast<std::string>(" :Unknown command") + static_cast<std::string>(CRLF))
-#define ERR_NEEDMOREPARAMS_BUILDER(command) (SERVER_NAME_PROMPT + " 461 * " + command + " :Not enough parameters" + CRLF)
-
-//NICK
-#define ERR_NICKCOLLISION_BUILDER(nickname) (SERVER_NAME_PROMPT + " 436 * " + nickname + " :Nickname collision" + CRLF)
-#define ERR_NICKNAMEINUSE_BUILDER(nickname) (SERVER_NAME_PROMPT + " 433 * " + nickname + " :Nickname is already in use" + CRLF)
-#define ERR_ERRONEOUSNICKNAME_BUILDER(nickname) (SERVER_NAME_PROMPT + " 432 * " + nickname + " :Erroneous nickname" + CRLF)
-
-//JOIN
 #define RPL_NOTOPIC(channel) (SERVER_NAME_PROMPT + " 331 * " + channel + " :No topic is set" + CRLF)
+#define RPL_TOPIC(channel, topic) (SERVER_NAME_PROMPT + " 332 * " + channel + " :" + topic + CRLF)
 #define RPL_NAMREPLY(nickname, channel, occupants) (SERVER_NAME_PROMPT + " 353 " + nickname + " @ " + channel + " :" + occupants + CRLF)
 #define RPL_ENDOFNAMES(nickname, channel) (SERVER_NAME_PROMPT + " 366 " + nickname + " " + channel + " :End of /NAMES list" + CRLF)
-#define RPL_CHAN_MODE(channel) (SERVER_NAME_PROMPT + " MODE " + channel + " " + CHAN_MODE_AVAILABLE + CRLF)
-#define RPL_TOPIC(channel, topic) (SERVER_NAME_PROMPT + " 332 * " + channel + " :" + topic + CRLF)
+#define ERR_NOSUCHNICK_BUILDER(nickname) (SERVER_NAME_PROMPT + " 401 " + nickname + " :No such nick/channel" + CRLF)
 #define ERR_NOSUCHCHANNEL_BUILDER(channel) (SERVER_NAME_PROMPT + " 403 * " + channel + " :No such channel" + CRLF)
 #define ERR_TOOMANYCHANNELS_BUILDER(channel) (SERVER_NAME_PROMPT + " 405 * " + channel + " :You have joined too many channels" + CRLF)
+#define ERR_NOTEXTTOSEND_BUILDER(nickname) (SERVER_NAME_PROMPT + " 412 " + nickname + " :No text to send" + CRLF)
+#define ERR_UNKNOWNCOMMAND_BUILDER(command) (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 421 * ") + static_cast<std::string>(command) + static_cast<std::string>(" :Unknown command") + static_cast<std::string>(CRLF))
+#define ERR_ERRONEOUSNICKNAME_BUILDER(nickname) (SERVER_NAME_PROMPT + " 432 * " + nickname + " :Erroneous nickname" + CRLF)
+#define ERR_NICKNAMEINUSE_BUILDER(nickname) (SERVER_NAME_PROMPT + " 433 * " + nickname + " :Nickname is already in use" + CRLF)
+#define ERR_NICKCOLLISION_BUILDER(nickname) (SERVER_NAME_PROMPT + " 436 * " + nickname + " :Nickname collision" + CRLF)
+#define ERR_NOTONCHANNEL_BUILDER(channel) (SERVER_NAME_PROMPT + " 442 * " + channel + " :You're not on that channel" + CRLF)
+#define ERR_NEEDMOREPARAMS_BUILDER(command) (SERVER_NAME_PROMPT + " 461 * " + command + " :Not enough parameters" + CRLF)
 #define ERR_CHANNELISFULL_BUILDER(channel) (SERVER_NAME_PROMPT + " 471 * " + channel + " :Cannot join channel (+l)" + CRLF)
 #define ERR_BADCHANNELKEY_BUILDER(channel) (SERVER_NAME_PROMPT + " 475 * " + channel + " :Cannot join channel (+k)" + CRLF)
-#define ERR_NOTONCHANNEL_BUILDER(channel) (SERVER_NAME_PROMPT + " 442 * " + channel + " :You're not on that channel" + CRLF)
 
-//PRIVMSG
-#define ERR_NOTEXTTOSEND_BUILDER(nickname) (SERVER_NAME_PROMPT + " 412 " + nickname + " :No text to send" + CRLF)
-#define ERR_NOSUCHNICK_BUILDER(nickname) (SERVER_NAME_PROMPT + " 401 " + nickname + " :No such nick/channel" + CRLF)
 #define RPL_PRIVMSG_MESSAGE(clientPrompt, nickname, message) (clientPrompt + " PRIVMSG " + nickname + " " + message + CRLF)
-
-
-//PART
+#define RPL_CHAN_MODE(channel) (SERVER_NAME_PROMPT + " MODE " + channel + " " + CHAN_MODE_AVAILABLE + CRLF)
 #define RPL_PART_MESSAGE(nickname, channel, message) (SERVER_NAME_PROMPT + " PART " + nickname + " leave " + channel + " " + message + CRLF)
-
-//QUIT
 #define ERR_QUIT_BUILDER(ip) (SERVER_NAME_PROMPT + " ERROR :Closing link: " + ip + "(Client Quit)" + CRLF)
 
 

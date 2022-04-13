@@ -174,7 +174,6 @@ void Server::checkClientActivity() {
 					std::cout << "Client number " << actualClient << " has been change his username to : " << _clients[actualClient].getClientUsername() << ", his mode to :" << _clients[actualClient].getClientMode() << " and his realname to :" << _clients[actualClient].getClientRealname() << std::endl;
 				}
 				else if (command[0] == "JOIN") {
-					_clients[actualClient].welcomeBoolClient();
 					if (!_clients[actualClient].getWelcomeBool()) throw Exception::ERR_RESTRICTED();
 					if (!(command.size() >= 2 && command.size() <= 3)) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 
@@ -215,6 +214,30 @@ void Server::checkClientActivity() {
 							}
 						}
 					}
+				}
+				else if (command[0] == "TOPIC") {
+					if (!_clients[actualClient].getWelcomeBool()) throw Exception::ERR_RESTRICTED();
+					if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
+
+					int indexChan = 0;
+					int indexClient = 0;
+					if ((indexChan = _channelExist(command[1])) >= 0) {
+						if ((indexClient = _channels[indexChan].checkClientConnected(_clients[actualClient])) >= 0) {
+							if (command.size() == 2) {
+								if (!_channels[indexChan].getChannelTopic().empty())
+									sendMessage(CLIENT_SOCKET, RPL_TOPIC(_channels[k].getChannelName(), _channels[k].getChannelTopic()));
+								else
+									sendMessage(CLIENT_SOCKET, RPL_NOTOPIC(_channels[k].getChannelName()));
+								}
+							}
+							else
+								_channels[indexChan].setChannelTopic(_strcatArguments(command.begin() + 2, command.end()));
+						}
+						else
+							throw Exception::ERR_NOTONCHANNEL(command[1]);
+					}
+					else
+						throw Exception::ERR_NOSUCHCHANNEL(command[1]);
 				}
 				else if (command[0] == "MSG") {  }
 				else if (command[0] == "PRIVMSG") { 

@@ -57,6 +57,22 @@ void Channel::connectToChan(Client *newOccupant, std::string password) {
 	if (!_addOccupant(newOccupant)) throw Exception::ERR_CHANNELISFULL(_channelName);
 };
 
+OccupantChannelMode *Channel::getClientMode(Client const &rhs) {
+	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
+		if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientSocket() == rhs.getClientSocket())
+			return &_channelOccupantsMode[i];
+	}
+	return NULL;
+}
+
+int Channel::checkClientConnected(Client const &rhs) {
+	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
+		if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientSocket() == rhs.getClientSocket())
+			return i;
+	}
+	return -1;
+}
+
 void Channel::_cleanChannelOccupants() {
 	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
 		_channelOccupants[i] = NULL;

@@ -1,0 +1,20 @@
+Server/Server.cpp:228:57: error: use of undeclared identifier 'k'
+                                                                        sendMessage(CLIENT_SOCKET, RPL_TOPIC(_channels[k].getChannelName(), _channels[k].getChannelTopic()));
+                                                                                                                       ^
+Server/Server.cpp:228:88: error: use of undeclared identifier 'k'
+                                                                        sendMessage(CLIENT_SOCKET, RPL_TOPIC(_channels[k].getChannelName(), _channels[k].getChannelTopic()));
+                                                                                                                                                      ^
+Server/Server.cpp:230:59: error: use of undeclared identifier 'k'
+                                                                        sendMessage(CLIENT_SOCKET, RPL_NOTOPIC(_channels[k].getChannelName()));
+                                                                                                                         ^
+Server/Server.cpp:242:5: error: expected catch
+                                else if (command[0] == "MSG") {  }
+                                ^
+Server/Server.cpp:242:5: error: expected expression
+Server/Server.cpp:319:5: error: expected expression
+                                catch (Exception::ERR_QUIT &e) {
+                                ^
+Server/Server.cpp:328:1: error: extraneous closing brace ('}')
+}
+^
+7 errors generated.
