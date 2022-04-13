@@ -24,7 +24,7 @@ typedef struct sockaddr SOCKADDR;
 #define SERVER_NAME "serverIRC"
 #define SERVER_NAME_PROMPT (static_cast<std::string>(":") + static_cast<std::string>(SERVER_NAME))
 
-#define VERSION "v 0.0.0"
+#define VERSION "v 0.1.0"
 #define CREATION_DATE "28.03.2022"
 
 #define USER_MODE_AVAILABLE ""
@@ -71,8 +71,14 @@ typedef struct sockaddr SOCKADDR;
 #define ERR_BADCHANNELKEY_BUILDER(channel) (SERVER_NAME_PROMPT + " 475 * " + channel + " :Cannot join channel (+k)" + CRLF)
 #define ERR_NOTONCHANNEL_BUILDER(channel) (SERVER_NAME_PROMPT + " 442 * " + channel + " :You're not on that channel" + CRLF)
 
+//PRIVMSG
+#define ERR_NOTEXTTOSEND_BUILDER(nickname) (SERVER_NAME_PROMPT + " 412 " + nickname + " :No text to send" + CRLF)
+#define ERR_NOSUCHNICK_BUILDER(nickname) (SERVER_NAME_PROMPT + " 401 " + nickname + " :No such nick/channel" + CRLF)
+#define RPL_PRIVMSG_MESSAGE(clientPrompt, nickname, message) (clientPrompt + " PRIVMSG " + nickname + " " + message + CRLF)
+
+
 //PART
-#define RPL_PART_MESSAGE(nickname, channel, message) (SERVER_NAME_PROMPT + " PART " + nickname + " leave " + channel + " :" + message + CRLF)
+#define RPL_PART_MESSAGE(nickname, channel, message) (SERVER_NAME_PROMPT + " PART " + nickname + " leave " + channel + " " + message + CRLF)
 
 //QUIT
 #define ERR_QUIT_BUILDER(ip) (SERVER_NAME_PROMPT + " ERROR :Closing link: " + ip + "(Client Quit)" + CRLF)
@@ -141,12 +147,13 @@ namespace Exception {
 		IRC_EXCEPTION_CUSTOM(ERR_TOOMANYCHANNELS, ERR_TOOMANYCHANNELS_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NOSUCHCHANNEL, ERR_NOSUCHCHANNEL_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NOTONCHANNEL, ERR_NOTONCHANNEL_BUILDER)
+		IRC_EXCEPTION_CUSTOM(ERR_NOTEXTTOSEND, ERR_NOTEXTTOSEND_BUILDER)
+		IRC_EXCEPTION_CUSTOM(ERR_NOSUCHNICK, ERR_NOSUCHNICK_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_QUIT, ERR_QUIT_BUILDER)
 };
 
 #include "Server/Server.hpp"
 #include "Channel/Channel.hpp"
 #include "Client/Client.hpp"
-#include "Mode/OccupantChannelMode.hpp"
 
 #endif

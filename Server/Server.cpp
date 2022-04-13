@@ -217,8 +217,40 @@ void Server::checkClientActivity() {
 					}
 				}
 				else if (command[0] == "MSG") {  }
-				else if (command[0] == "PRIVMSG") { }
-				else if (command[0] == "PART") { 
+				else if (command[0] == "PRIVMSG") { 
+					if (!_clients[actualClient].getWelcomeBool()) throw Exception::ERR_RESTRICTED();
+					if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
+
+					std::vector<std::string> clientName = _split(command[1], ",");
+					std::string message = "";
+
+					if (command.size() > 2) {
+						message = _strcatArguments(command.begin() + 2, command.end());
+						if (message[0] == ':')
+							message = ":" + message;
+					}
+
+					int index = 0;
+					for (size_t i = 0; i < clientName.size(); i++) {
+						if (!clientName[i].find_first_of("#!&+")) {
+							if ((index = _channelExist(clientName[i])) >= 0) {
+								if (message.empty())
+									throw Exception::ERR_NOTEXTTOSEND(_clients[actualClient].getClientNickname());
+								else
+									_channels[index].sendToAllChannel(_clients[actualClient].getClientSocket(), RPL_PRIVMSG_MESSAGE(_createClientPrompt(_clients[actualClient]), clientName[i], message));
+							}
+							else
+								throw Exception::ERR_NOSUCHNICK(clientName[i]);
+						}
+						else if ((index = _clientExist(clientName[i])) >= 0) {
+							sendMessage(_clients[index].getClientSocket(), RPL_PRIVMSG_MESSAGE(_createClientPrompt(_clients[actualClient]), clientName[i], message));
+						}
+						else
+								throw Exception::ERR_NOSUCHNICK(clientName[i]);
+					}
+					
+				}
+				else if (command[0] == "PART") {
 					if (!_clients[actualClient].getWelcomeBool()) throw Exception::ERR_RESTRICTED();
 					
 					if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
@@ -227,8 +259,11 @@ void Server::checkClientActivity() {
 					std::string info;
 
 					info.clear();
-					if (command.size() > 2)
+					if (command.size() > 2) {
 						info = _strcatArguments(command.begin() + 2, command.end());
+						if (info[0] != ':')
+							info = ":" + info;
+					}
 
 					int index = 0;
 					for (size_t i = 0; i < chanName.size(); i++) {
@@ -361,4 +396,13 @@ std::string Server::_createClientPrompt(Client const &rhs) {
 	std::stringstream ss;
 	ss << ":" << rhs.getClientNickname() << "!~" << rhs.getClientUsername() << "@" << inet_ntoa(rhs.getClientAddress().sin_addr);
 	return ss.str();
+}
+
+int Server::_clientExist(std::string name) {
+	for (size_t i = 0; i < MAX_CLIENTS; i++) {
+		if (_clients[i].getClientNickname().size())
+			if (_clients[i].getClientNickname() == name)
+				return i;
+	}
+	return -1;
 }

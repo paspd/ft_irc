@@ -61,6 +61,8 @@ private:
 
 	int _channelExist(std::string name);
 
+	int _clientExist(std::string name);
+
 	void _checkClientInChannel();
 
 	void _affAllChannels();
