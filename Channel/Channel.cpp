@@ -100,6 +100,7 @@ void Channel::delOccupant(int const socket) {
 	{
 		if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientSocket() == socket) {
 			_channelOccupants[i] = NULL;
+			_channelOccupantsMode[i].reset();
 			return ;
 		}
 	}
@@ -114,7 +115,20 @@ bool Channel::checkIfClient() {
 	return false;
 }
 
-void Channel::sendToAllChannel(int const &socketSender, std::string const &msg) {
+void Channel::sendToAllChannel(std::string const &msg) {
+	int msgSize = msg.length();
+	ssize_t ret_send = 0;
+	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
+		if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientSocket()) {
+			ret_send = send(_channelOccupants[i]->getClientSocket(), msg.c_str(), msgSize, 0);
+			if (ret_send != (ssize_t)msgSize)
+				throw Exception::SendFailed();
+		}
+	}
+	
+}
+
+void Channel::userSendToChannel(int const socketSender, std::string const &msg) {
 	int msgSize = msg.length();
 	ssize_t ret_send = 0;
 	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {

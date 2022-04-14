@@ -67,7 +67,8 @@ typedef struct sockaddr SOCKADDR;
 
 #define RPL_PRIVMSG_MESSAGE(clientPrompt, nickname, message) (clientPrompt + " PRIVMSG " + nickname + " " + message + CRLF)
 #define RPL_CHAN_MODE(channel) (SERVER_NAME_PROMPT + " MODE " + channel + " " + CHAN_MODE_AVAILABLE + CRLF)
-#define RPL_PART_MESSAGE(nickname, channel, message) (SERVER_NAME_PROMPT + " PART " + nickname + " leave " + channel + " " + message + CRLF)
+#define RPL_PART_MESSAGE(clientPrompt, channel, message) (clientPrompt + " PART " + channel + (message[0] == ':' ? " " : " :") + message + CRLF)
+#define RPL_PART_NOMESSAGE(clientPrompt, channel) (clientPrompt + " PART " + channel + CRLF)
 #define ERR_QUIT_BUILDER(ip) (SERVER_NAME_PROMPT + " ERROR :Closing link: " + ip + "(Client Quit)" + CRLF)
 
 
@@ -81,7 +82,8 @@ class name : public std::exception {																			\
 			}																									\
 		public:																									\
 			virtual const char* what() const throw() {															\
-				static std::string message = exceptionMessageBuilder(function, std::strerror(errno));			\
+				static std::string message;																		\
+				message = exceptionMessageBuilder(function, std::strerror(errno));								\
 				return (message.c_str());																		\
 			}																									\
 };

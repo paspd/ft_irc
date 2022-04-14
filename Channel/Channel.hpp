@@ -44,7 +44,9 @@ public:
 
 	void delOccupant(int const socket);
 
-	void sendToAllChannel(int const &socketSender, std::string const &msg);
+	void sendToAllChannel(std::string const &msg);
+
+	void userSendToChannel(int const socketSender, std::string const &msg);
 
 	bool checkIfClient();
 

@@ -223,9 +223,8 @@ void Server::checkClientActivity() {
 						if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 
 						int indexChan = 0;
-						int indexClient = 0;
 						if ((indexChan = _channelExist(command[1])) >= 0) {
-							if ((indexClient = _channels[indexChan].checkClientConnected(_clients[actualClient])) >= 0) {
+							if (_channels[indexChan].checkClientConnected(_clients[actualClient]) >= 0) {
 								if (command.size() == 2) {
 									if (!_channels[indexChan].getChannelTopic().empty())
 										sendMessage(CLIENT_SOCKET, RPL_TOPIC(_channels[indexChan].getChannelName(), _channels[indexChan].getChannelTopic()));
@@ -247,7 +246,7 @@ void Server::checkClientActivity() {
 
 						if (command.size() > 2) {
 							message = _strcatArguments(command.begin() + 2, command.end());
-							if (message[0] == ':')
+							if (message[0] != ':')
 								message = ":" + message;
 						}
 
@@ -255,10 +254,13 @@ void Server::checkClientActivity() {
 						for (size_t i = 0; i < clientName.size(); i++) {
 							if (!clientName[i].find_first_of("#!&+")) {
 								if ((index = _channelExist(clientName[i])) >= 0) {
-									if (message.empty())
-										throw Exception::ERR_NOTEXTTOSEND(_clients[actualClient].getClientNickname());
-									else
-										_channels[index].sendToAllChannel(_clients[actualClient].getClientSocket(), RPL_PRIVMSG_MESSAGE(_createClientPrompt(_clients[actualClient]), clientName[i], message));
+									if (_channels[index].checkClientConnected(_clients[actualClient]) >= 0) {
+										if (message.empty())
+											throw Exception::ERR_NOTEXTTOSEND(_clients[actualClient].getClientNickname());
+										else
+											_channels[index].userSendToChannel(_clients[actualClient].getClientSocket(), RPL_PRIVMSG_MESSAGE(_createClientPrompt(_clients[actualClient]), clientName[i], message));
+									}
+									else throw Exception::ERR_NOTONCHANNEL(clientName[i]);
 								}
 								else
 									throw Exception::ERR_NOSUCHNICK(clientName[i]);
@@ -289,17 +291,33 @@ void Server::checkClientActivity() {
 						int index = 0;
 						for (size_t i = 0; i < chanName.size(); i++) {
 							if ((index = _channelExist(chanName[i])) >= 0) {
-								_clients[actualClient].leaveChannel(chanName[i]);
-								_channels[index].delOccupant(_clients[actualClient].getClientSocket());
-								if (!info.empty())
-									_channels[index].sendToAllChannel(_clients[actualClient].getClientSocket(), RPL_PART_MESSAGE(_clients[actualClient].getClientNickname(), _channels[i].getChannelName(), info));
+								if (_channels[index].checkClientConnected(_clients[actualClient]) >= 0) {
+									if (!info.empty())
+										_channels[index].sendToAllChannel(RPL_PART_MESSAGE(_createClientPrompt(_clients[actualClient]), _channels[i].getChannelName(), info));
+									else
+										_channels[index].sendToAllChannel(RPL_PART_NOMESSAGE(_createClientPrompt(_clients[actualClient]), _channels[i].getChannelName()));
+									_clients[actualClient].leaveChannel(chanName[i]);
+									_channels[index].delOccupant(_clients[actualClient].getClientSocket());
+								}
+								else throw Exception::ERR_NOTONCHANNEL(chanName[i]);
 							}
 							else
 								throw Exception::ERR_NOSUCHCHANNEL(chanName[i]);
 						}
 					}
 					else if (command[0] == "NAMES") { 
-						// if (command.size() == 1)
+						if (!_clients[actualClient].getWelcomeBool()) throw Exception::ERR_RESTRICTED();
+						if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
+					
+						std::vector<std::string> chanName = _split(command[1], ",");
+						int index = 0;
+						for (size_t i = 0; i < chanName.size(); i++) {
+							if ((index = _channelExist(chanName[i])) >= 0) {
+								sendMessage(CLIENT_SOCKET, RPL_NAMREPLY(_clients[actualClient].getClientNickname(), _channels[index].getChannelName(), _channels[index].getStrOccupant()));
+							}
+							else throw Exception::ERR_NOSUCHCHANNEL(chanName[i]);
+						}
+					
 					}
 					else if (command[0] == "QUIT") {
 						exit(0);
