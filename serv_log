@@ -1,40 +1,5 @@
 Listening on port 2 ...
-New connection at socket number 4, ip is : 127.0.0.1, port : 50087
-Adding of new client at number: 0
-All channels in server :
-
-All clients in server :
-_clients[0] :
-nickname :, username :, realname :
-
-Client number 0 has send a message : PASS hello 
-Client number 0 has been accepted.
-All channels in server :
-
-All clients in server :
-_clients[0] :
-nickname :, username :, realname :
-
-Client number 0 has send a message : CAP LS 302 
-All channels in server :
-
-All clients in server :
-_clients[0] :
-nickname :, username :, realname :
-
-Client number 0 has send a message : NICK ldauga USER ldauga 0 * :ldauga 
-All channels in server :
-
-All clients in server :
-_clients[0] :
-nickname :, username :, realname :
-
-Host disconected, ip is : 127.0.0.1, port : 50087
-All channels in server :
-
-All clients in server :
-
-New connection at socket number 4, ip is : 127.0.0.1, port : 50100
+New connection at socket number 4, ip is : 127.0.0.1, port : 50173
 Adding of new client at number: 0
 All channels in server :
 
@@ -59,12 +24,6 @@ nickname :, username :, realname :
 
 Client number 0 has send a message : NICK ldauga 
 Client number 0 has been change his nickname to : ldauga.
-All channels in server :
-
-All clients in server :
-_clients[0] :
-nickname :ldauga, username :, realname :
-
 Client number 0 has send a message : USER ldauga 0 * :ldauga 
 Client number 0 has been change his username to : ldauga, his mode to :0 and his realname to ::ldauga
 All channels in server :

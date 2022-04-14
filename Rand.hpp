@@ -44,10 +44,10 @@ typedef struct sockaddr SOCKADDR;
 #define CRLF "\r\n"
 
 
-#define RPL_WELCOME(nickname, username, hostname) (SERVER_NAME_PROMPT + " 001 Welcome to the Internet Relay Network " + nickname + "!" + username + "@" + hostname + CRLF)
-#define RPL_YOURHOST (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 002 Your host is ") + static_cast<std::string>(SERVER_NAME) + static_cast<std::string>(", running version ") + static_cast<std::string>(VERSION) + static_cast<std::string>(CRLF))
-#define RPL_CREATED (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 003 This server was created ") + static_cast<std::string>(CREATION_DATE) + static_cast<std::string>(CRLF))
-#define RPL_MYINFO (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 004 ") + static_cast<std::string>(SERVER_NAME) + static_cast<std::string>(" ") + static_cast<std::string>(VERSION) + static_cast<std::string>(" ") + static_cast<std::string>(USER_MODE_AVAILABLE) + static_cast<std::string>(" ") + static_cast<std::string>(CHAN_MODE_AVAILABLE) + static_cast<std::string>(" ") + static_cast<std::string>(CRLF))
+#define RPL_WELCOME(nickname, username, hostname) (SERVER_NAME_PROMPT + " 001 " + nickname + " Welcome to the Internet Relay Network " + CRLF)
+#define RPL_YOURHOST(nickname) (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 002 ") + static_cast<std::string>(nickname) + static_cast<std::string>(" :Your host is ") + static_cast<std::string>(SERVER_NAME) + static_cast<std::string>(", running version ") + static_cast<std::string>(VERSION) + static_cast<std::string>(CRLF))
+#define RPL_CREATED(nickname) (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 003 ") + static_cast<std::string>(nickname) + static_cast<std::string>(" This server was created ") + static_cast<std::string>(CREATION_DATE) + static_cast<std::string>(CRLF))
+#define RPL_MYINFO(nickname) (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 004 ") + static_cast<std::string>(nickname) + static_cast<std::string>(" ") + static_cast<std::string>(SERVER_NAME) + static_cast<std::string>(" ") + static_cast<std::string>(VERSION) + static_cast<std::string>(" ") + static_cast<std::string>(USER_MODE_AVAILABLE) + static_cast<std::string>(" ") + static_cast<std::string>(CHAN_MODE_AVAILABLE) + static_cast<std::string>(" ") + static_cast<std::string>(CRLF))
 #define RPL_NOTOPIC(channel) (SERVER_NAME_PROMPT + " 331 * " + channel + " :No topic is set" + CRLF)
 #define RPL_TOPIC(channel, topic) (SERVER_NAME_PROMPT + " 332 * " + channel + " :" + topic + CRLF)
 #define RPL_NAMREPLY(nickname, channel, occupants) (SERVER_NAME_PROMPT + " 353 " + nickname + " @ " + channel + " :" + occupants + CRLF)
