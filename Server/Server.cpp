@@ -236,8 +236,7 @@ void Server::checkClientActivity() {
 						}
 						else throw Exception::ERR_NOSUCHCHANNEL(command[1]);
 					}
-					else if (command[0] == "MSG") {  }
-					else if (command[0] == "PRIVMSG") { 
+					else if (command[0] == "MSG" || command[0] == "PRIVMSG") {
 						if (!_clients[actualClient].getWelcomeBool()) throw Exception::ERR_RESTRICTED();
 						if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 
@@ -317,11 +316,6 @@ void Server::checkClientActivity() {
 							}
 							else throw Exception::ERR_NOSUCHCHANNEL(chanName[i]);
 						}
-					
-					}
-					else if (command[0] == "QUIT") {
-						exit(0);
-						throw Exception::ERR_QUIT(inet_ntoa(_clients[actualClient].getClientAddress().sin_addr));
 					}
 					else throw Exception::ERR_UNKNOWNCOMMAND(command[0]);	
 					if (!_clients[actualClient].getWelcomeBool() && _clients[actualClient].getPassBool() && _clients[actualClient].getNickBool() && _clients[actualClient].getUserBool()) {
