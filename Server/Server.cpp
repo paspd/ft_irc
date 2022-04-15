@@ -35,7 +35,7 @@ void Server::bindMasterSocket() {
 }
 
 void Server::serverListen() {
-	std::cout << "Listening on port " << _port << " ..." << std::endl;
+	std::cout << BLUE << "Listening on port " << _port << " ..." << END << std::endl << std::endl;
 	if (listen(_masterSocket, SOMAXCONN) < 0)
 		throw Exception::ListenFailed();
 }
@@ -93,12 +93,12 @@ void Server::checkServerActivity() {
 		if ((new_socket = accept(_masterSocket, (struct sockaddr *)&new_address, (socklen_t*)&new_address_length)) < 0)
 			throw Exception::AcceptFailed();
 			//err server full
-		std::cout << "New connection at socket number " << new_socket << ", ip is : " << inet_ntoa(new_address.sin_addr) << ", port : " << ntohs(new_address.sin_port) << std::endl;
+		std::cout << BOLD << GREEN << "New connection at socket number " << new_socket << ", ip is : " << inet_ntoa(new_address.sin_addr) << ", port : " << ntohs(new_address.sin_port) << END << std::endl << std::endl;
 		for (int actualClient = 0; actualClient < MAX_CLIENTS; actualClient++) {
 			if (CLIENT_SOCKET == 0) {
 				_clients[actualClient].setClientSocket(new_socket);
 				_clients[actualClient].setClientAddress(new_address);
-				std::cout << "Adding of new client at number: " << actualClient << std::endl;
+				std::cout << BOLD << GREEN << "Adding of new client at number: " << actualClient << END << std::endl << std::endl;
 				break ;
 			}
 		}
@@ -111,7 +111,7 @@ void Server::checkClientActivity() {
 		if (FD_ISSET(s, &_socketDescriptor)) {
 			int retread;
 			if ((retread = read(s, buffer, 2048)) == 0) {
-				std::cout << "Host disconected, ip is : " << inet_ntoa(_clients[actualClient].getClientAddress().sin_addr) << ", port : " << ntohs(_clients[actualClient].getClientAddress().sin_port) << std::endl;
+				std::cout << BOLD << RED << "Host disconected, ip is : " << inet_ntoa(_clients[actualClient].getClientAddress().sin_addr) << ", port : " << ntohs(_clients[actualClient].getClientAddress().sin_port) << END << std::endl << std::endl;
 				close(s);
 				_clients[actualClient].resetClient();
 			}
@@ -127,11 +127,11 @@ void Server::checkClientActivity() {
 					tmp.getClientAddress();
 					if (!command.size())
 						return ;
-					std::cout << "Client number " << actualClient << " has send a message : ";
+					std::cout << BOLD << YELLOW << "Client number " << actualClient << " has send a message : " << END << YELLOW;
 					for (size_t i = 0; i < command.size(); i++) {
 						std::cout << command[i] << " ";
 					}
-					std::cout << std::endl;
+					std::cout << END << std::endl << std::endl;
 
 					try {
 
@@ -141,7 +141,7 @@ void Server::checkClientActivity() {
 						if (command.size() == 2 && command[1] != _password) throw Exception::ERR_PASSWDMISMATCH();
 
 						_clients[actualClient].passBoolClient();
-						std::cout << "Client number " << actualClient << " has been accepted." << std::endl;
+						std::cout << BOLD << ORANGE << "Client number " << actualClient << END << ORANGE << " has been accepted." << END << std::endl << std::endl;
 					}
 					else if (command[0] == "NICK") {
 						if (!_clients[actualClient].getPassBool()) throw Exception::ERR_NOTREGISTERED();
@@ -159,7 +159,7 @@ void Server::checkClientActivity() {
 								else if (j == MAX_CLIENTS - 1) {
 									_clients[actualClient].setClientNickname(command[1]);
 									_clients[actualClient].nickBoolClient();
-									std::cout << "Client number " << actualClient << " has been change his nickname to : " << _clients[actualClient].getClientNickname() << "." << std::endl;
+									std::cout << BOLD << ORANGE << "Client number " << actualClient << END << ORANGE << " has been change his nickname to : " << _clients[actualClient].getClientNickname() << "." << END << std::endl << std::endl;
 								}
 							}
 						}
@@ -174,7 +174,7 @@ void Server::checkClientActivity() {
 						_clients[actualClient].setClientRealname(_strcatArguments(command.begin() + 4, command.end()));
 						_clients[actualClient].userBoolClient();
 
-						std::cout << "Client number " << actualClient << " has been change his username to : " << _clients[actualClient].getClientUsername() << ", his mode to :" << _clients[actualClient].getClientMode() << " and his realname to :" << _clients[actualClient].getClientRealname() << std::endl;
+						std::cout << BOLD << ORANGE << "Client number " << actualClient << END << ORANGE << " has been change his username to : " << _clients[actualClient].getClientUsername() << ", his mode to :" << _clients[actualClient].getClientMode() << " and his realname to :" << _clients[actualClient].getClientRealname() << END << std::endl << std::endl;
 					}
 					else if (command[0] == "JOIN") {
 						if (!_clients[actualClient].getWelcomeBool()) throw Exception::ERR_RESTRICTED();
@@ -331,6 +331,7 @@ void Server::checkClientActivity() {
 					}
 					catch (std::exception &e) {
 						sendMessage(CLIENT_SOCKET, e.what());
+						std::cout << BOLD << RED << "[ERROR] " << e.what() << END << std::endl;
 					}
 				}
 			}
@@ -407,23 +408,23 @@ void Server::_checkClientInChannel() {
 }
 
 void Server::_affAllClients() {
-	std::cout << "All clients in server :" << std::endl;
+	std::cout << BOLD << CYAN << "All clients in server :" << END << std::endl;
 	for (size_t i = 0; i < MAX_CLIENTS; i++)
 	{
 		if (_clients[i].getClientSocket())
-			std::cout << "_clients[" << i << "] :" << std::endl << _clients[i];
+			std::cout << BOLD << CYAN << "_clients[" << i << "] :" << std::endl << END << CYAN << _clients[i];
 	}
-	std::cout << std::endl;
+	std::cout << END << std::endl;
 }
 
 void Server::_affAllChannels() {
-	std::cout << "All channels in server :" << std::endl;
+	std::cout << BOLD << PURPLE << "All channels in server :" << END << std::endl;
 	for (size_t i = 0; i < MAX_SERV_CHAN; i++)
 	{
 		if (_channels[i].getChannelName().size())
-			std::cout << "_channels[" << i << "] :" << std::endl << _channels[i];
+			std::cout << BOLD << PURPLE << "_channels[" << i << "] :" << std::endl << END << PURPLE << _channels[i];
 	}
-	std::cout << std::endl;
+	std::cout << END << std::endl;
 }
 
 std::string Server::_createClientPrompt(Client const &rhs) {

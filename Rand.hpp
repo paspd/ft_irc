@@ -20,6 +20,21 @@ typedef int SOCKET;
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef socklen_t SOCKLEN_T;
 typedef struct sockaddr SOCKADDR;
+   
+#define GREY	"\033[30m"
+#define RED		"\033[31m"
+#define GREEN	"\033[32m"
+#define YELLOW	"\033[33m"
+#define BLUE	"\033[34m"
+#define PINK	"\033[35m"
+#define CYAN	"\033[36m"
+#define ORANGE	"\033[38;5;166m"
+#define PURPLE	"\033[38;5;128m"
+#define WHITE	"\033[37m"
+#define END		"\033[0m"
+#define BOLD	"\033[1m"
+#define UNDER	"\033[4m"
+#define SUR		"\033[7m"
 
 #define SERVER_NAME "serverIRC"
 #define SERVER_NAME_PROMPT (static_cast<std::string>(":") + static_cast<std::string>(SERVER_NAME))
@@ -35,14 +50,12 @@ typedef struct sockaddr SOCKADDR;
 #define MAX_CURRENT_CHAN 8
 #define MAX_SERV_CHAN 256
 
-
 #define CLIENT_SOCKET _clients[actualClient].getClientSocket()
 
 #define PASS (char *)"PASS"
 #define NICK (char *)"NICK"
 
 #define CRLF "\r\n"
-
 
 #define RPL_WELCOME(nickname, username, hostname) (SERVER_NAME_PROMPT + " 001 " + nickname + " Welcome to the Internet Relay Network " + CRLF)
 #define RPL_YOURHOST(nickname) (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 002 ") + static_cast<std::string>(nickname) + static_cast<std::string>(" :Your host is ") + static_cast<std::string>(SERVER_NAME) + static_cast<std::string>(", running version ") + static_cast<std::string>(VERSION) + static_cast<std::string>(CRLF))
@@ -69,6 +82,7 @@ typedef struct sockaddr SOCKADDR;
 #define RPL_CHAN_MODE(channel) (SERVER_NAME_PROMPT + " MODE " + channel + " " + CHAN_MODE_AVAILABLE + CRLF)
 #define RPL_PART_MESSAGE(clientPrompt, channel, message) (clientPrompt + " PART " + channel + (message[0] == ':' ? " " : " :") + message + CRLF)
 #define RPL_PART_NOMESSAGE(clientPrompt, channel) (clientPrompt + " PART " + channel + CRLF)
+#define RPL_PING(clientPrompt, channel) (clientPrompt + " PART " + channel + CRLF)
 #define ERR_QUIT_BUILDER(ip) (SERVER_NAME_PROMPT + " ERROR :Closing link: " + ip + "(Client Quit)" + CRLF)
 
 
