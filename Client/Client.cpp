@@ -8,10 +8,6 @@ int Client::getClientSocket() const {
 	return _clientSocket;
 }
 
-int Client::getClientMode() const {
-	return _clientMode;
-}
-
 SOCKADDR_IN Client::getClientAddress() const {
 	return _clientAddress;
 }
@@ -44,12 +40,12 @@ std::string Client::getClientRealname() const {
 	return _realname;
 }
 
-void Client::setClientSocket(int newSocketID) {
-	_clientSocket = newSocketID;
+ClientMode Client::getClientMode() const {
+	return _clientMode;
 }
 
-void Client::setClientMode(int newMode) {
-	_clientMode = newMode;
+void Client::setClientSocket(int newSocketID) {
+	_clientSocket = newSocketID;
 }
 
 void Client::setClientNickname(std::string nickname) {
@@ -64,13 +60,17 @@ void Client::setClientRealname(std::string realname) {
 	_realname = realname;
 }
 
+void Client::setClientMode(char mode, bool value) {
+	_clientMode.setMode(mode, value);
+}
+
 void Client::setClientAddress(SOCKADDR_IN newAdress) {
 	_clientAddress = newAdress;
 	_clientAddressLength = sizeof(_clientAddress);
 }
 
 void Client::resetClient() {
-	_clientMode = 0;
+	_clientMode.reset();
 	_clientSocket = 0;
 	_clientAddress.sin_family = 0;
 	_clientAddress.sin_addr.s_addr = 0;
@@ -133,7 +133,6 @@ void Client::leaveAllChannels() {
 }
 
 Client &Client::operator=(Client const &rhs) {
-	_clientMode = rhs._clientMode;
 	_clientSocket = rhs._clientSocket;
 	_clientAddress.sin_family = rhs._clientAddress.sin_family;
 	_clientAddress.sin_addr.s_addr = rhs._clientAddress.sin_addr.s_addr;
