@@ -170,11 +170,11 @@ void Server::checkClientActivity() {
 						if (command.size() < 5) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 
 						_clients[actualClient].setClientUsername(command[1]);
-						_clients[actualClient].setClientMode(std::atoi(command[2].c_str()));
+						_clients[actualClient].setClientMode(command[2]);
 						_clients[actualClient].setClientRealname(_strcatArguments(command.begin() + 4, command.end()));
 						_clients[actualClient].userBoolClient();
 
-						std::cout << BOLD << ORANGE << "Client number " << actualClient << END << ORANGE << " has been change his username to : " << _clients[actualClient].getClientUsername() << ", his mode to :" << _clients[actualClient].getClientMode() << " and his realname to :" << _clients[actualClient].getClientRealname() << END << std::endl << std::endl;
+						std::cout << BOLD << ORANGE << "Client number " << actualClient << END << ORANGE << " has been change his username to : " << _clients[actualClient].getClientUsername() << " and his realname to :" << _clients[actualClient].getClientRealname() << END << std::endl << std::endl;
 					}
 					else if (command[0] == "JOIN") {
 						if (!_clients[actualClient].getWelcomeBool()) throw Exception::ERR_RESTRICTED();
@@ -336,6 +336,25 @@ void Server::checkClientActivity() {
 							else throw Exception::ERR_NOSUCHCHANNEL(chanName[i]);
 						}
 					}
+					else if (command[0] == "MODE") {
+						if (command.size() < 3) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
+
+						if (command[1] == _clients[actualClient].getClientNickname()) {
+							if (_checkModeList(command[2])) {
+								for (int i = 0; USER_MODE_AVAILABLE[i]; i++) { std::cout << "| " << USER_MODE_AVAILABLE[i] << ": " << _clients[actualClient].getClientMode().getMode(USER_MODE_AVAILABLE[i]) << " "; } std::cout << " |" << std::endl;
+								// _clients[actualClient].setClientMode(command[2]);
+								for (int i = 0; USER_MODE_AVAILABLE[i]; i++) { std::cout << "| " << USER_MODE_AVAILABLE[i] << ": " << _clients[actualClient].getClientMode().getMode(USER_MODE_AVAILABLE[i]) << " "; } std::cout << " |" << std::endl;
+							}
+							else throw Exception::ERR_UMODEUNKNOWNFLAG();
+						}
+						else throw Exception::ERR_USERSDONTMATCH();
+
+					}
+					else if (command[0] == "PING") {
+						if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
+
+						sendMessage(CLIENT_SOCKET, RPL_PONG());
+					}
 					else throw Exception::ERR_UNKNOWNCOMMAND(command[0]);
 					if (!_clients[actualClient].getWelcomeBool() && _clients[actualClient].getPassBool() && _clients[actualClient].getNickBool() && _clients[actualClient].getUserBool()) {
 						sendMessage(CLIENT_SOCKET, RPL_WELCOME(_clients[actualClient].getClientNickname(), _clients[actualClient].getClientUsername(), inet_ntoa(_clients[actualClient].getClientAddress().sin_addr)));
@@ -424,6 +443,19 @@ void Server::_checkClientInChannel() {
 		if (!_channels[i].checkIfClient())
 			_channels[i].resetChannel();
 	}
+}
+
+bool Server::_checkModeList(std::string const &modeList) {
+	for (size_t i = 0; i < modeList.size();)
+	{
+		if (!modeList.find_first_of("-+", i)) {
+			i++;
+			while (!modeList.find_first_of(USER_MODE_AVAILABLE, i))
+				i++;
+		}
+		else return false;
+	}
+	return true;
 }
 
 void Server::_affAllClients() {

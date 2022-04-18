@@ -42,7 +42,7 @@ typedef struct sockaddr SOCKADDR;
 #define VERSION "v 0.1.0"
 #define CREATION_DATE "28.03.2022"
 
-#define USER_MODE_AVAILABLE ""
+#define USER_MODE_AVAILABLE "aiwro"
 #define CHAN_MODE_AVAILABLE ""
 
 #define MAX_CLIENTS 1024
@@ -83,7 +83,7 @@ typedef struct sockaddr SOCKADDR;
 #define RPL_CHAN_MODE(channel) (SERVER_NAME_PROMPT + " MODE " + channel + " " + CHAN_MODE_AVAILABLE + CRLF)
 #define RPL_PART_MESSAGE(clientPrompt, channel, message) (clientPrompt + " PART " + channel + (message[0] == ':' ? " " : " :") + message + CRLF)
 #define RPL_PART_NOMESSAGE(clientPrompt, channel) (clientPrompt + " PART " + channel + CRLF)
-#define RPL_PING(clientPrompt, channel) (clientPrompt + " PART " + channel + CRLF)
+#define RPL_PONG() (SERVER_NAME_PROMPT + " PONG " + SERVER_NAME  + " " + SERVER_NAME_PROMPT +  CRLF)
 #define ERR_QUIT_BUILDER(ip) (SERVER_NAME_PROMPT + " ERROR :Closing link: " + ip + "(Client Quit)" + CRLF)
 
 
@@ -156,6 +156,8 @@ namespace Exception {
 		IRC_EXCEPTION(ERR_PASSWDMISMATCH, "464 * PASS :Password incorrect\r\n")
 		IRC_EXCEPTION(ERR_ALREADYREGISTERED, "462 * PASS :Unauthorized command (already registered)\r\n")
 		IRC_EXCEPTION(ERR_RESTRICTED, "484 :Your connection is restricted!\r\n")
+		IRC_EXCEPTION(ERR_UMODEUNKNOWNFLAG, " 501 :Unknown MODE flag\r\n")
+		IRC_EXCEPTION(ERR_USERSDONTMATCH, " 502 :Cannot change mode for other users\r\n")
 		IRC_EXCEPTION_CUSTOM(ERR_UNKNOWNCOMMAND, ERR_UNKNOWNCOMMAND_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NEEDMOREPARAMS, ERR_NEEDMOREPARAMS_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NICKCOLLISION, ERR_NICKCOLLISION_BUILDER)
