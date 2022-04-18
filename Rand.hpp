@@ -1,15 +1,15 @@
 #ifndef RAND_HPP
 #define RAND_HPP
 
-#include <stdio.h> 
-#include <string.h>   //strlen 
+#include <stdio.h>
+#include <string.h>   //strlen
 #include <string>
-#include <stdlib.h> 
-#include <errno.h> 
-#include <unistd.h>   //close 
-#include <arpa/inet.h>    //close 
-#include <sys/types.h> 
-#include <sys/socket.h> 
+#include <stdlib.h>
+#include <errno.h>
+#include <unistd.h>   //close
+#include <arpa/inet.h>    //close
+#include <sys/types.h>
+#include <sys/socket.h>
 #include <netinet/in.h>
 #include <stdexcept>
 #include <iostream>
@@ -20,7 +20,7 @@ typedef int SOCKET;
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef socklen_t SOCKLEN_T;
 typedef struct sockaddr SOCKADDR;
-   
+
 #define GREY	"\033[30m"
 #define RED		"\033[31m"
 #define GREEN	"\033[32m"
@@ -74,6 +74,7 @@ typedef struct sockaddr SOCKADDR;
 #define ERR_NICKNAMEINUSE_BUILDER(nickname) (SERVER_NAME_PROMPT + " 433 * " + nickname + " :Nickname is already in use" + CRLF)
 #define ERR_NICKCOLLISION_BUILDER(nickname) (SERVER_NAME_PROMPT + " 436 * " + nickname + " :Nickname collision" + CRLF)
 #define ERR_NOTONCHANNEL_BUILDER(channel) (SERVER_NAME_PROMPT + " 442 * " + channel + " :You're not on that channel" + CRLF)
+#define ERR_USERONCHANNEL_BUILDER(nickname, channel) (SERVER_NAME_PROMPT + " 443 * " + channel + " :User " + nickname + " is already on the channel" + CRLF)
 #define ERR_NEEDMOREPARAMS_BUILDER(command) (SERVER_NAME_PROMPT + " 461 * " + command + " :Not enough parameters" + CRLF)
 #define ERR_CHANNELISFULL_BUILDER(channel) (SERVER_NAME_PROMPT + " 471 * " + channel + " :Cannot join channel (+l)" + CRLF)
 #define ERR_BADCHANNELKEY_BUILDER(channel) (SERVER_NAME_PROMPT + " 475 * " + channel + " :Cannot join channel (+k)" + CRLF)
@@ -125,6 +126,21 @@ class name : public std::exception {																			\
 		}																										\
 };
 
+#define IRC_EXCEPTION_CUSTOM_2(name, messageBuilder)															\
+class name : public std::exception {																			\
+	private:																									\
+		std::string param1;																						\
+		std::string param2;																						\
+	public:																										\
+		name(const std::string param1, const std::string param2) : param1(param1), param2(param2) {}			\
+		~name() throw() {}																						\
+		virtual const char* what() const throw() {																\
+			static std::string msg;																				\
+			msg = messageBuilder(param1, param2);																\
+			return (msg.c_str());																				\
+		}																										\
+};
+
 namespace Exception {
 		SERVER_EXCEPTION(MasterSocketBindingFailed, "bind")
 		SERVER_EXCEPTION(MasterSocketCreationFailed, "socket");
@@ -153,6 +169,7 @@ namespace Exception {
 		IRC_EXCEPTION_CUSTOM(ERR_NOTEXTTOSEND, ERR_NOTEXTTOSEND_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NOSUCHNICK, ERR_NOSUCHNICK_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_QUIT, ERR_QUIT_BUILDER)
+		IRC_EXCEPTION_CUSTOM_2(ERR_USERONCHANNEL, ERR_USERONCHANNEL_BUILDER)
 };
 
 #include "Server/Server.hpp"

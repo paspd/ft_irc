@@ -213,7 +213,7 @@ void Server::checkClientActivity() {
 									else
 										sendMessage(CLIENT_SOCKET, RPL_NOTOPIC(_channels[k].getChannelName()));
 									}
-									
+
 								}
 							}
 						}
@@ -270,11 +270,30 @@ void Server::checkClientActivity() {
 							else
 									throw Exception::ERR_NOSUCHNICK(clientName[i]);
 						}
-						
+
+					}
+					else if (command[0] == "INVITE") {
+						if (!_clients[actualClient].getWelcomeBool()) throw Exception::ERR_RESTRICTED();
+
+						if (command.size() < 3) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
+
+						std::string clientName = command[1];
+						std::string channelName = command[2];
+
+						int clientIndex = 0;
+						if ((clientIndex = _clientExist(clientName)) < 0) throw Exception::ERR_NOSUCHNICK(clientName);
+
+						int chanIndex = 0;
+						if ((chanIndex = _channelExist(channelName)) >= 0) {
+							if (!_channels[chanIndex].checkClientConnected(_clients[actualClient]))
+								throw Exception::ERR_NOTONCHANNEL(channelName);
+							if (!_channels[chanIndex].checkClientConnected(_clients[clientIndex]))
+								throw Exception::ERR_USERONCHANNEL(clientName, channelName);
+						}
 					}
 					else if (command[0] == "PART") {
 						if (!_clients[actualClient].getWelcomeBool()) throw Exception::ERR_RESTRICTED();
-						
+
 						if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 
 						std::vector<std::string> chanName = _split(command[1], ",");
@@ -304,10 +323,10 @@ void Server::checkClientActivity() {
 								throw Exception::ERR_NOSUCHCHANNEL(chanName[i]);
 						}
 					}
-					else if (command[0] == "NAMES") { 
+					else if (command[0] == "NAMES") {
 						if (!_clients[actualClient].getWelcomeBool()) throw Exception::ERR_RESTRICTED();
 						if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
-					
+
 						std::vector<std::string> chanName = _split(command[1], ",");
 						int index = 0;
 						for (size_t i = 0; i < chanName.size(); i++) {
@@ -317,7 +336,7 @@ void Server::checkClientActivity() {
 							else throw Exception::ERR_NOSUCHCHANNEL(chanName[i]);
 						}
 					}
-					else throw Exception::ERR_UNKNOWNCOMMAND(command[0]);	
+					else throw Exception::ERR_UNKNOWNCOMMAND(command[0]);
 					if (!_clients[actualClient].getWelcomeBool() && _clients[actualClient].getPassBool() && _clients[actualClient].getNickBool() && _clients[actualClient].getUserBool()) {
 						sendMessage(CLIENT_SOCKET, RPL_WELCOME(_clients[actualClient].getClientNickname(), _clients[actualClient].getClientUsername(), inet_ntoa(_clients[actualClient].getClientAddress().sin_addr)));
 						sendMessage(CLIENT_SOCKET, RPL_YOURHOST(_clients[actualClient].getClientNickname()));
