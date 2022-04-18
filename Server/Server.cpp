@@ -170,7 +170,8 @@ void Server::checkClientActivity() {
 						if (command.size() < 5) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 
 						_clients[actualClient].setClientUsername(command[1]);
-						_clients[actualClient].setClientMode(command[2]);
+						for (size_t i = 0; i < command[2].size(); i++)
+							_clients[actualClient].setClientMode(command[2][i], true);
 						_clients[actualClient].setClientRealname(_strcatArguments(command.begin() + 4, command.end()));
 						_clients[actualClient].userBoolClient();
 
@@ -341,6 +342,14 @@ void Server::checkClientActivity() {
 
 						if (command[1] == _clients[actualClient].getClientNickname()) {
 							if (_checkModeList(command[2])) {
+								for (size_t i = 0; i < command[2].size();) {
+									bool value = (command[2][i++] == '+' ? true : false);
+									while (command[2].find_first_of("+-", i) != i) {
+										std::cout << i << std::endl;
+										_clients[actualClient].setClientMode(command[2][i++], value);
+									}
+								}
+								
 								for (int i = 0; USER_MODE_AVAILABLE[i]; i++) { std::cout << "| " << USER_MODE_AVAILABLE[i] << ": " << _clients[actualClient].getClientMode().getMode(USER_MODE_AVAILABLE[i]) << " "; } std::cout << " |" << std::endl;
 								// _clients[actualClient].setClientMode(command[2]);
 								for (int i = 0; USER_MODE_AVAILABLE[i]; i++) { std::cout << "| " << USER_MODE_AVAILABLE[i] << ": " << _clients[actualClient].getClientMode().getMode(USER_MODE_AVAILABLE[i]) << " "; } std::cout << " |" << std::endl;
@@ -448,10 +457,9 @@ void Server::_checkClientInChannel() {
 bool Server::_checkModeList(std::string const &modeList) {
 	for (size_t i = 0; i < modeList.size();)
 	{
-		if (!modeList.find_first_of("-+", i)) {
+		if (modeList.find_first_of("-+", i) == i) {
 			i++;
-			while (!modeList.find_first_of(USER_MODE_AVAILABLE, i))
-				i++;
+			while (modeList.find_first_of(USER_MODE_AVAILABLE, i) == i) i++;
 		}
 		else return false;
 	}
