@@ -65,6 +65,8 @@ private:
 
 	void _checkClientInChannel();
 
+	bool _checkModeList(std::string const &modeList);
+
 	void _affAllChannels();
 	
 	void _affAllClients();
