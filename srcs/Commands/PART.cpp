@@ -19,9 +19,9 @@ void Server::part(std::vector<std::string> command, int actualClient) {
 		if ((index = _channelExist(chanName[i])) >= 0) {
 			if (_channels[index].checkClientConnected(_clients[actualClient]) >= 0) {
 				if (!info.empty())
-					_channels[index].sendToAllChannel(RPL_PART_MESSAGE(_createClientPrompt(_clients[actualClient]), _channels[i].getChannelName(), info));
+					_channels[index].sendToAllChannel(RPL_PART_MESSAGE(_clients[actualClient].createClientPrompt(), _channels[i].getChannelName(), info));
 				else
-					_channels[index].sendToAllChannel(RPL_PART_NOMESSAGE(_createClientPrompt(_clients[actualClient]), _channels[i].getChannelName()));
+					_channels[index].sendToAllChannel(RPL_PART_NOMESSAGE(_clients[actualClient].createClientPrompt(), _channels[i].getChannelName()));
 				_clients[actualClient].leaveChannel(chanName[i]);
 				_channels[index].delOccupant(_clients[actualClient].getClientSocket());
 			}

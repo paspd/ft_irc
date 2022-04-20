@@ -1,10 +1,9 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-#include "../Rand.hpp"
+#include "../Rand/Rand.hpp"
 #include "../Mode/OccupantChannelMode.hpp"
 #include "../Mode/ChannelMode.hpp"
-// #include "../Mode/Mode.hpp"
 
 class Client;
 

@@ -1,5 +1,5 @@
 #include "Server/Server.hpp"
-#include "Rand.hpp"
+#include "Rand/Rand.hpp"
 
 int main (int argc, char **argv)
 {

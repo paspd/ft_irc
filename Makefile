@@ -19,7 +19,8 @@ SRCS			=		srcs/main.cpp \
 						srcs/Commands/PASS.cpp \
 						srcs/Commands/PING.cpp \
 						srcs/Commands/TOPIC.cpp \
-						srcs/Commands/USER.cpp
+						srcs/Commands/USER.cpp \
+						srcs/Rand/Rand.cpp
 
 OBJS			=		$(SRCS:.cpp=.o)
 

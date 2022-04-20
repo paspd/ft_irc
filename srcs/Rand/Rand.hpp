@@ -17,10 +17,13 @@
 #include <sstream>
 #include <algorithm>
 
+
 typedef int SOCKET;
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef socklen_t SOCKLEN_T;
 typedef struct sockaddr SOCKADDR;
+
+// void sendMessage(SOCKET sock, std::string msg);
 
 #define GREY	"\033[30m"
 #define RED		"\033[31m"
@@ -65,7 +68,9 @@ typedef struct sockaddr SOCKADDR;
 #define RPL_NOTOPIC(channel) (SERVER_NAME_PROMPT + " 331 * " + channel + " :No topic is set" + CRLF)
 #define RPL_TOPIC(channel, topic) (SERVER_NAME_PROMPT + " 332 * " + channel + " :" + topic + CRLF)
 #define RPL_NAMREPLY(nickname, channel, occupants) (SERVER_NAME_PROMPT + " 353 " + nickname + " @ " + channel + " :" + occupants + CRLF)
-#define RPL_ENDOFNAMES(nickname, channel) (SERVER_NAME_PROMPT + " 366 " + nickname + " " + channel + " :End of /NAMES list" + CRLF)
+#define RPL_ENDOFNAMES(nickname, channel) (SERVER_NAME_PROMPT + " 366 " + nickname + " " + channel + CRLF)
+#define RPL_BANLIST(nickname, channel, ban, clientprompt) (SERVER_NAME_PROMPT + " 367 " + nickname + " " + channel + " " + ban + " " + clientprompt + CRLF)
+#define RPL_ENDOFBANLIST(channel) (SERVER_NAME_PROMPT + " 368 " + channel + " :End of channel ban list" + CRLF)
 #define ERR_NOSUCHNICK_BUILDER(nickname) (SERVER_NAME_PROMPT + " 401 " + nickname + " :No such nick/channel" + CRLF)
 #define ERR_NOSUCHCHANNEL_BUILDER(channel) (SERVER_NAME_PROMPT + " 403 * " + channel + " :No such channel" + CRLF)
 #define ERR_TOOMANYCHANNELS_BUILDER(channel) (SERVER_NAME_PROMPT + " 404 * " + channel + " :Cannot send to channel" + CRLF)
@@ -180,8 +185,10 @@ namespace Exception {
 		IRC_EXCEPTION_CUSTOM_2(ERR_USERONCHANNEL, ERR_USERONCHANNEL_BUILDER)
 };
 
-#include "Server/Server.hpp"
-#include "Channel/Channel.hpp"
-#include "Client/Client.hpp"
+#include "../Server/Server.hpp"
+#include "../Channel/Channel.hpp"
+#include "../Client/Client.hpp"
+
+void sendMessage(SOCKET sock, std::string msg);
 
 #endif

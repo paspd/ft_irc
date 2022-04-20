@@ -21,9 +21,6 @@ private:
 	//mode m
 	bool _moderate;
 
-	//mode b
-	bool _ban;
-
 	//mode k
 	bool _password;
 public:
@@ -33,11 +30,10 @@ public:
 		_topicLocked = false;
 		_noExternMSG = false;
 		_moderate = false;
-		_ban = false;
 		_password = false;
 	};
 
-	//i p t n m b k
+	//i p t n m k
 	void setMode(std::string const &mode) {
 		bool value = (mode[0] == '+' ? true : false);
 
@@ -48,7 +44,6 @@ public:
 		case 't': _topicLocked = value; break;
 		case 'n': _noExternMSG = value; break;
 		case 'm': _moderate = value; break;
-		case 'b': _ban = value; break;
 		case 'k': _password = value; break;
 		default:
 			break;
@@ -64,7 +59,6 @@ public:
 		case 't': return _topicLocked;
 		case 'n': return _noExternMSG;
 		case 'm': return _moderate;
-		case 'b': return _ban;
 		case 'k': return _password;
 		}
 		return false;

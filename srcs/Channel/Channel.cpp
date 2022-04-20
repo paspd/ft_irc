@@ -71,6 +71,7 @@ bool Channel::getMode(char const &mode, Client const &client = Client()) const {
 }
 
 void Channel::setMode(std::string const &mode, Client const &client, std::string const &argument) {
+			int l = 0;
 	switch (mode[1])
 	{
 	case 'C':
@@ -89,7 +90,16 @@ void Channel::setMode(std::string const &mode, Client const &client, std::string
 				_channelOccupantsMode[i].setMode("+c");
 			return ;
 	case 'b':
+		if (!argument.size()) {
+			std::cout << "test" << std::endl;
+			for (std::vector<std::string>::const_iterator it = _banAddr.begin(); it != _banAddr.end(); it++)
+				sendMessage(client.getClientSocket(), RPL_BANLIST(client.getClientNickname(), _channelName, *it, client.createClientPrompt()));
+			sendMessage(client.getClientSocket(), RPL_ENDOFBANLIST(_channelName));
+			return ;
+		}
 		(mode[0] == '+' ? _addBanAddr(argument) : _delBanAddr(argument));
+			for (std::vector<std::string>::const_iterator it = _banAddr.begin(); it != _banAddr.end(); it++)
+				std::cout << "ban " << l++ << " :" << *it << std::endl;
 		break;
 	case 'k':
 		(mode[0] == '+' ? _channelPassword = argument : _channelPassword.erase());

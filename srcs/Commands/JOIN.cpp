@@ -30,8 +30,8 @@ void Server::join(std::vector<std::string> command, int actualClient) {
 					throw Exception::ERR_TOOMANYCHANNELS(chanName[j]);
 				}
 				else {
-				sendMessage(CLIENT_SOCKET, _createClientPrompt(_clients[actualClient]) + " JOIN " + _channels[k].getChannelName() + CRLF);
-				_channels[k].userSendToChannel(_clients[actualClient].getClientSocket(), _createClientPrompt(_clients[actualClient]) + " JOIN " + _channels[k].getChannelName() + CRLF);
+				sendMessage(CLIENT_SOCKET, _clients[actualClient].createClientPrompt() + " JOIN " + _channels[k].getChannelName() + CRLF);
+				_channels[k].userSendToChannel(_clients[actualClient].getClientSocket(), _clients[actualClient].createClientPrompt() + " JOIN " + _channels[k].getChannelName() + CRLF);
 				sendMessage(CLIENT_SOCKET, RPL_CHAN_MODE(_channels[k].getChannelName()));
 				sendMessage(CLIENT_SOCKET, RPL_NAMREPLY(_clients[actualClient].getClientNickname(), _channels[k].getChannelName(), _channels[k].getStrOccupant(CLIENT_SOCKET)));
 				sendMessage(CLIENT_SOCKET, RPL_ENDOFNAMES(_clients[actualClient].getClientNickname(), _channels[k].getChannelName()));

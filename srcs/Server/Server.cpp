@@ -180,12 +180,7 @@ void Server::checkClientActivity() {
 	}
 }
 
-void Server::sendMessage(SOCKET sock, std::string msg) {
-	int msgSize = msg.length();
-	ssize_t ret_send = send(sock, msg.c_str(), msgSize, 0);
-	if (ret_send != (ssize_t)msgSize)
-		throw Exception::SendFailed();
-}
+
 
 bool Server::_checkValidityNick(const std::string &nick) {
 	return std::all_of(nick.begin(), nick.end(), ::isalnum);
@@ -307,12 +302,6 @@ void Server::_affAllChannels() {
 			std::cout << BOLD << PURPLE << "_channels[" << i << "] :" << std::endl << END << PURPLE << _channels[i];
 	}
 	std::cout << END << std::endl;
-}
-
-std::string Server::_createClientPrompt(Client const &rhs) {
-	std::stringstream ss;
-	ss << ":" << rhs.getClientNickname() << "!~" << rhs.getClientUsername() << "@" << inet_ntoa(rhs.getClientAddress().sin_addr);
-	return ss.str();
 }
 
 int Server::_clientExist(std::string name) {

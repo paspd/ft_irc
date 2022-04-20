@@ -22,7 +22,7 @@ void Server::msg(std::vector<std::string> command, int actualClient) {
 					if (message.empty())
 						throw Exception::ERR_NOTEXTTOSEND(_clients[actualClient].getClientNickname());
 					else
-						_channels[index].userSendToChannel(_clients[actualClient].getClientSocket(), RPL_PRIVMSG_MESSAGE(_createClientPrompt(_clients[actualClient]), clientName[i], message));
+						_channels[index].userSendToChannel(_clients[actualClient].getClientSocket(), RPL_PRIVMSG_MESSAGE(_clients[actualClient].createClientPrompt(), clientName[i], message));
 					}
 				}
 				else throw Exception::ERR_CANNOTSENDTOCHAN(clientName[i]);
@@ -31,7 +31,7 @@ void Server::msg(std::vector<std::string> command, int actualClient) {
 				throw Exception::ERR_NOSUCHNICK(clientName[i]);
 		}
 		else if ((index = _clientExist(clientName[i])) >= 0) {
-			sendMessage(_clients[index].getClientSocket(), RPL_PRIVMSG_MESSAGE(_createClientPrompt(_clients[actualClient]), clientName[i], message));
+			sendMessage(_clients[index].getClientSocket(), RPL_PRIVMSG_MESSAGE(_clients[actualClient].createClientPrompt(), clientName[i], message));
 		}
 		else
 				throw Exception::ERR_NOSUCHNICK(clientName[i]);

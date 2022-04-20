@@ -162,6 +162,12 @@ void Client::_cleanCurrentList() {
 	}
 }
 
+std::string Client::createClientPrompt() const {
+	std::stringstream ss;
+	ss << ":" << _nickname << "!~" << _username << "@" << inet_ntoa(_clientAddress.sin_addr);
+	return ss.str();
+}
+
 bool Client::checkConnected(Channel *channel) {
 	for (size_t i = 0; i < MAX_CURRENT_CHAN; i++) {
 		if (_currentChannels[i] != NULL && _currentChannels[i]->getChannelName() == channel->getChannelName())

@@ -13,8 +13,6 @@ private:
 	//mode v
 	bool _voicePrivilege;
 
-	
-
 public:
 	void reset() {
 		_creator = false;
