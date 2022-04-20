@@ -44,7 +44,7 @@ typedef struct sockaddr SOCKADDR;
 #define CREATION_DATE "28.03.2022"
 
 #define USER_MODE_AVAILABLE "iro"
-#define CHAN_MODE_AVAILABLE "ipstnmbkovC"
+#define CHAN_MODE_AVAILABLE "iptnmbkovC"
 
 #define MAX_CLIENTS 1024
 #define MAX_OCCUPANTS_CHAN 16
@@ -68,7 +68,8 @@ typedef struct sockaddr SOCKADDR;
 #define RPL_ENDOFNAMES(nickname, channel) (SERVER_NAME_PROMPT + " 366 " + nickname + " " + channel + " :End of /NAMES list" + CRLF)
 #define ERR_NOSUCHNICK_BUILDER(nickname) (SERVER_NAME_PROMPT + " 401 " + nickname + " :No such nick/channel" + CRLF)
 #define ERR_NOSUCHCHANNEL_BUILDER(channel) (SERVER_NAME_PROMPT + " 403 * " + channel + " :No such channel" + CRLF)
-#define ERR_TOOMANYCHANNELS_BUILDER(channel) (SERVER_NAME_PROMPT + " 405 * " + channel + " :You have joined too many channels" + CRLF)
+#define ERR_TOOMANYCHANNELS_BUILDER(channel) (SERVER_NAME_PROMPT + " 404 * " + channel + " :Cannot send to channel" + CRLF)
+#define ERR_CANNOTSENDTOCHAN_BUILDER(channel) (SERVER_NAME_PROMPT + " 405 * " + channel + " :You have joined too many channels" + CRLF)
 #define ERR_NOTEXTTOSEND_BUILDER(nickname) (SERVER_NAME_PROMPT + " 412 " + nickname + " :No text to send" + CRLF)
 #define ERR_UNKNOWNCOMMAND_BUILDER(command) (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 421 * ") + static_cast<std::string>(command) + static_cast<std::string>(" :Unknown command") + static_cast<std::string>(CRLF))
 #define ERR_ERRONEOUSNICKNAME_BUILDER(nickname) (SERVER_NAME_PROMPT + " 432 * " + nickname + " :Erroneous nickname" + CRLF)
@@ -172,6 +173,7 @@ namespace Exception {
 		IRC_EXCEPTION_CUSTOM(ERR_NOSUCHCHANNEL, ERR_NOSUCHCHANNEL_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NOTONCHANNEL, ERR_NOTONCHANNEL_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NOTEXTTOSEND, ERR_NOTEXTTOSEND_BUILDER)
+		IRC_EXCEPTION_CUSTOM(ERR_CANNOTSENDTOCHAN, ERR_CANNOTSENDTOCHAN_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NOSUCHNICK, ERR_NOSUCHNICK_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_CHANOPRIVSNEEDED, ERR_CHANOPRIVSNEEDED_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_QUIT, ERR_QUIT_BUILDER)

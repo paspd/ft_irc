@@ -12,9 +12,6 @@ private:
 	//mode p
 	bool _private;
 
-	//mode s
-	bool _secret;
-
 	//mode t
 	bool _topicLocked;
 
@@ -33,7 +30,6 @@ public:
 	void reset() {
 		_inviteOnly = false;
 		_private = false;
-		_secret = false;
 		_topicLocked = false;
 		_noExternMSG = false;
 		_moderate = false;
@@ -41,7 +37,7 @@ public:
 		_password = false;
 	};
 
-	//i p s t n m b k
+	//i p t n m b k
 	void setMode(std::string const &mode) {
 		bool value = (mode[0] == '+' ? true : false);
 
@@ -49,7 +45,6 @@ public:
 		{
 		case 'i': _inviteOnly = value; break;
 		case 'p': _private = value; break;
-		case 's': _secret = value; break;
 		case 't': _topicLocked = value; break;
 		case 'n': _noExternMSG = value; break;
 		case 'm': _moderate = value; break;
@@ -60,13 +55,12 @@ public:
 		}
 	};
 
-	//i p s t n m b k
+	//i p t n m b k
 	bool getMode(char const &mode) const {
 		switch (mode)
 		{
 		case 'i': return _inviteOnly;
 		case 'p': return _private;
-		case 's': return _secret;
 		case 't': return _topicLocked;
 		case 'n': return _noExternMSG;
 		case 'm': return _moderate;

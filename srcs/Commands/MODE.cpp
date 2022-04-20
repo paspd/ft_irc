@@ -20,7 +20,7 @@ void Server::mode(std::vector<std::string> command, int actualClient) {
 			if (_channels[chanIndex].checkClientConnected(_clients[actualClient]) >= 0) {
 				if (_checkChannelModeList(command[2])) {
 					if (_channels[chanIndex].getMode('o', _clients[actualClient]) || _channels[chanIndex].getMode('C', _clients[actualClient])) {
-						if (command[2].find_first_of("bk") != std::string::npos)
+						if (command[2].find_first_of("bko") != std::string::npos)
 							return _channels[chanIndex].setMode(command[2], _clients[actualClient], command[3]);
 						return _channels[chanIndex].setMode(command[2], _clients[actualClient]);
 					}

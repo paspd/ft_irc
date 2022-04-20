@@ -82,12 +82,12 @@ void Channel::setMode(std::string const &mode, Client const &client, std::string
 		for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++)
 			if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientSocket() == client.getClientSocket())
 				_channelOccupantsMode[i].setMode(mode);
-		break;
+		return ;
 	case 'v':
-		for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++)
-			if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientSocket() == client.getClientSocket())
-				_channelOccupantsMode[i].setMode(mode);
-		break;
+		for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
+			if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientNickname() == argument)
+				_channelOccupantsMode[i].setMode("+c");
+			return ;
 	case 'b':
 		(mode[0] == '+' ? _addBanAddr(argument) : _delBanAddr(argument));
 		break;
