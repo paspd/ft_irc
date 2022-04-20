@@ -4,22 +4,22 @@ CC				=		clang++
 
 CFLAGS			=		-Wall -Werror -Wextra -std=c++98
 
-SRCS			=		main.cpp \
-						Server/Server.cpp \
-						Client/Client.cpp \
-						Channel/Channel.cpp \
-						Commands/INVITE.cpp \
-						Commands/JOIN.cpp \
-						Commands/KILL.cpp \
-						Commands/MODE.cpp \
-						Commands/MSG.cpp \
-						Commands/NAMES.cpp \
-						Commands/NICK.cpp \
-						Commands/PART.cpp \
-						Commands/PASS.cpp \
-						Commands/PING.cpp \
-						Commands/TOPIC.cpp \
-						Commands/USER.cpp
+SRCS			=		srcs/main.cpp \
+						srcs/Server/Server.cpp \
+						srcs/Client/Client.cpp \
+						srcs/Channel/Channel.cpp \
+						srcs/Commands/INVITE.cpp \
+						srcs/Commands/JOIN.cpp \
+						srcs/Commands/KILL.cpp \
+						srcs/Commands/MODE.cpp \
+						srcs/Commands/MSG.cpp \
+						srcs/Commands/NAMES.cpp \
+						srcs/Commands/NICK.cpp \
+						srcs/Commands/PART.cpp \
+						srcs/Commands/PASS.cpp \
+						srcs/Commands/PING.cpp \
+						srcs/Commands/TOPIC.cpp \
+						srcs/Commands/USER.cpp
 
 OBJS			=		$(SRCS:.cpp=.o)
 

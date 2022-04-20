@@ -3,6 +3,7 @@
 
 #include "../Rand.hpp"
 #include "../Mode/OccupantChannelMode.hpp"
+#include "../Mode/ChannelMode.hpp"
 // #include "../Mode/Mode.hpp"
 
 class Client;
@@ -17,6 +18,10 @@ private:
 
 	Client *_channelOccupants[MAX_OCCUPANTS_CHAN];
 	OccupantChannelMode _channelOccupantsMode[MAX_OCCUPANTS_CHAN];
+
+	std::vector<std::string> _banAddr;
+
+	ChannelMode _channelMode;
 
 public:
 	Channel &operator=(Channel &rhs);
@@ -38,6 +43,8 @@ public:
 
 	void setChannel(std::string name, std::string password);
 
+	void setMode(std::string const &mode, Client const &client, std::string const &argument = std::string());
+
 	void setChannelTopic(std::string channelTopic);
 
 	void connectToChan(Client *newOccupant, std::string password);
@@ -48,11 +55,11 @@ public:
 
 	void userSendToChannel(int const socketSender, std::string const &msg);
 
-	bool checkIfClient();
+	int checkIfClient();
 
 	std::string getStrOccupant(int const &socketSender);
 
-	OccupantChannelMode *getClientMode(Client const &rhs);
+	bool getMode(char const &mode, Client const &client) const;
 
 	int checkClientConnected(Client const &rhs);
 
@@ -61,7 +68,9 @@ private:
 
 	bool _addOccupant(Client *newOccupant);
 
-
+	void _addBanAddr(std::string const &banAddr);
+	
+	void _delBanAddr(std::string const &banAddr);
 };
 
 std::ostream &	operator<<(std::ostream & o, Channel const & rhs);

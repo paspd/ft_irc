@@ -100,6 +100,9 @@ void Client::nickBoolClient() {
 
 void Client::welcomeBoolClient() {
 	_welcomeBool = true;
+	std::stringstream ss;
+	ss << _nickname << "!" << _username << "@" << inet_ntoa(_clientAddress.sin_addr);
+	_clientID = ss.str();
 }
 
 bool Client::addChannel(Channel *channel) {

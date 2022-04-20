@@ -17,7 +17,7 @@ void Server::msg(std::vector<std::string> command, int actualClient) {
 	for (size_t i = 0; i < clientName.size(); i++) {
 		if (!clientName[i].find_first_of("#!&+")) {
 			if ((index = _channelExist(clientName[i])) >= 0) {
-				if (_channels[index].checkClientConnected(_clients[actualClient]) >= 0) {
+				if (_channels[index].checkClientConnected(_clients[actualClient]) >= 0 || !_channels[index].getMode('n', _clients[actualClient])) {
 					if (message.empty())
 						throw Exception::ERR_NOTEXTTOSEND(_clients[actualClient].getClientNickname());
 					else

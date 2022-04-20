@@ -4,8 +4,13 @@
 class OccupantChannelMode
 {
 private:
+	//mode C
 	bool _creator;
+	
+	//mode o
 	bool _operator;
+
+	//mode v
 	bool _voicePrivilege;
 
 	
@@ -17,23 +22,30 @@ public:
 		_voicePrivilege = false;
 	};
 
-	void setCreator(bool const &rhs) {
-		_creator = rhs;
-	};
-	
-	void setOperator(bool const &rhs){
-		_operator = rhs;
-	};
-	
-	void setVoicePrivilege(bool const &rhs) {
-		_voicePrivilege = rhs;
+	//C o v
+	void setMode(std::string const &mode) {
+		bool value = (mode[0] == '+' ? true : false);
+
+		switch (mode[1])
+		{
+		case 'C': _creator = value; break;
+		case 'o': _operator = value; break;
+		case 'v': _voicePrivilege = value; break;
+		default:
+			break;
+		}
 	};
 
-	bool getCreator() const { return _creator; };
-	
-	bool getOperator() const { return _operator; };
-	
-	bool getVoicePrivilege() const { return _voicePrivilege; };
+	//i p s t n m b k
+	bool getMode(char const &mode) const {
+		switch (mode)
+		{
+		case 'C': return _creator;
+		case 'o': return _operator;
+		case 'v': return _voicePrivilege;
+		}
+		return false;
+	};
 
 	OccupantChannelMode() {};
 	~OccupantChannelMode() {};

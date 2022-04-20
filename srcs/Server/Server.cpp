@@ -251,7 +251,6 @@ bool Server::_createChannel(std::string name, std::string password) {
 
 int Server::_channelExist(std::string name) {
 	for (size_t i = 0; i < MAX_SERV_CHAN; i++) {
-
 		if (_channels[i].getChannelName().size())
 			if (_channels[i].getChannelName() == name)
 				return i;
@@ -266,7 +265,7 @@ void Server::_checkClientInChannel() {
 	}
 }
 
-bool Server::_checkModeList(std::string const &modeList) {
+bool Server::_checkUserModeList(std::string const &modeList) {
 	std::string::const_iterator it = modeList.begin(), its = modeList.end();
 	std::string mode = (std::string)USER_MODE_AVAILABLE + CHAN_MODE_AVAILABLE;
 	bool check = false;
@@ -284,6 +283,10 @@ bool Server::_checkModeList(std::string const &modeList) {
 		else return false;
 	}
 	return true;
+}
+
+bool Server::_checkChannelModeList(std::string const &modeList) {
+	return (modeList.size() == 2 && !modeList.find_first_of("+-") && modeList.find_first_of(CHAN_MODE_AVAILABLE) == 1);
 }
 
 void Server::_affAllClients() {

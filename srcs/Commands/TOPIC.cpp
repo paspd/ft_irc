@@ -12,7 +12,10 @@ void Server::topic(std::vector<std::string> command, int actualClient) {
 					sendMessage(CLIENT_SOCKET, RPL_TOPIC(_channels[indexChan].getChannelName(), _channels[indexChan].getChannelTopic()));
 				else sendMessage(CLIENT_SOCKET, RPL_NOTOPIC(_channels[indexChan].getChannelName()));
 			}
-			else _channels[indexChan].setChannelTopic(_strcatArguments(command.begin() + 2, command.end()));
+			else if (_channels[indexChan].getMode('o', _clients[actualClient]) || _channels[indexChan].getMode('C', _clients[actualClient])) {
+				_channels[indexChan].setChannelTopic(_strcatArguments(command.begin() + 2, command.end()));
+			}
+			else throw Exception::ERR_CHANOPRIVSNEEDED(command[1]);
 		}
 		else throw Exception::ERR_NOTONCHANNEL(command[1]);
 	}

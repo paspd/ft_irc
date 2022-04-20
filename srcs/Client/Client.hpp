@@ -18,6 +18,8 @@ private:
 	
 	ClientMode _clientMode;
 
+	std::string _clientID;
+
 	bool _passBool;
 	bool _nickBool;
 	bool _userBool;

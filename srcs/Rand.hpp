@@ -44,7 +44,7 @@ typedef struct sockaddr SOCKADDR;
 #define CREATION_DATE "28.03.2022"
 
 #define USER_MODE_AVAILABLE "iro"
-#define CHAN_MODE_AVAILABLE "a"
+#define CHAN_MODE_AVAILABLE "ipstnmbkovC"
 
 #define MAX_CLIENTS 1024
 #define MAX_OCCUPANTS_CHAN 16
@@ -79,6 +79,7 @@ typedef struct sockaddr SOCKADDR;
 #define ERR_NEEDMOREPARAMS_BUILDER(command) (SERVER_NAME_PROMPT + " 461 * " + command + " :Not enough parameters" + CRLF)
 #define ERR_CHANNELISFULL_BUILDER(channel) (SERVER_NAME_PROMPT + " 471 * " + channel + " :Cannot join channel (+l)" + CRLF)
 #define ERR_BADCHANNELKEY_BUILDER(channel) (SERVER_NAME_PROMPT + " 475 * " + channel + " :Cannot join channel (+k)" + CRLF)
+#define ERR_CHANOPRIVSNEEDED_BUILDER(channel) (SERVER_NAME_PROMPT + " 482 * " + channel + " :You're not channel operator" + CRLF)
 
 #define RPL_PRIVMSG_MESSAGE(clientPrompt, nickname, message) (clientPrompt + " PRIVMSG " + nickname + " " + message + CRLF)
 #define RPL_CHAN_MODE(channel) (SERVER_NAME_PROMPT + " MODE " + channel + " " + CHAN_MODE_AVAILABLE + CRLF)
@@ -172,6 +173,7 @@ namespace Exception {
 		IRC_EXCEPTION_CUSTOM(ERR_NOTONCHANNEL, ERR_NOTONCHANNEL_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NOTEXTTOSEND, ERR_NOTEXTTOSEND_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NOSUCHNICK, ERR_NOSUCHNICK_BUILDER)
+		IRC_EXCEPTION_CUSTOM(ERR_CHANOPRIVSNEEDED, ERR_CHANOPRIVSNEEDED_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_QUIT, ERR_QUIT_BUILDER)
 		IRC_EXCEPTION_CUSTOM_2(ERR_USERONCHANNEL, ERR_USERONCHANNEL_BUILDER)
 };
