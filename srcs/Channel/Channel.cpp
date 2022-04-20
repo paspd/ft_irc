@@ -84,7 +84,7 @@ void Channel::setMode(std::string const &mode, Client const &client, std::string
 				_channelOccupantsMode[i].setMode(mode);
 		return ;
 	case 'v':
-		for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
+		for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++)
 			if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientNickname() == argument)
 				_channelOccupantsMode[i].setMode("+c");
 			return ;
