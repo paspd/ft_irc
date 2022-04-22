@@ -49,29 +49,29 @@ public:
 
 public: //commands
 
-	void pass(std::vector<std::string> command, int actualClient);
-
-	void nick(std::vector<std::string> command, int actualClient);
-
-	void user(std::vector<std::string> command, int actualClient);
+	void invite(std::vector<std::string> command, int actualClient);
 
 	void join(std::vector<std::string> command, int actualClient);
 
-	void topic(std::vector<std::string> command, int actualClient);
+	void mode(std::vector<std::string> command, int actualClient);
 
 	void msg(std::vector<std::string> command, int actualClient);
 
-	void invite(std::vector<std::string> command, int actualClient);
-
-	void kill(std::vector<std::string> command, int actualClient);
-
-	void part(std::vector<std::string> command, int actualClient);
-
 	void names(std::vector<std::string> command, int actualClient);
 
-	void mode(std::vector<std::string> command, int actualClient);
+	void nick(std::vector<std::string> command, int actualClient);
+
+	void oper(std::vector<std::string> command, int actualClient);
+	
+	void part(std::vector<std::string> command, int actualClient);
+
+	void pass(std::vector<std::string> command, int actualClient);
 
 	void ping(std::vector<std::string> command, int actualClient);
+
+	void topic(std::vector<std::string> command, int actualClient);
+
+	void user(std::vector<std::string> command, int actualClient);
 
 private:
 

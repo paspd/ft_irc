@@ -17,27 +17,21 @@ public:
 		if (mode.size() < 2)
 			return ;
 		bool val = (mode[0] == '+' ? true : false);
-
-		for (size_t i = 1; i < mode.size(); i++)
-		{
-			switch (mode[i])
-			{
-			case 'i':
-				_invisible = val;
-				break;
-			case 'r':
-				if (val || _OP)
-					_restricted = val;
-				break;
-			case 'o':
-				if (!val)
-					_OP = val;
-				break;
-			default:
-				break;
-			}
-		}
 		
+		switch (mode[2])
+		{
+		case 'i':
+			_invisible = val;
+			break;
+		case 'r':
+			_restricted = val;
+			break;
+		case 'p':
+			_OP = val;
+			break;
+		default:
+			break;
+		}
 	}
 
 	//i r o

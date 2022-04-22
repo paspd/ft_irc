@@ -10,11 +10,11 @@ SRCS			=		srcs/main.cpp \
 						srcs/Channel/Channel.cpp \
 						srcs/Commands/INVITE.cpp \
 						srcs/Commands/JOIN.cpp \
-						srcs/Commands/KILL.cpp \
 						srcs/Commands/MODE.cpp \
 						srcs/Commands/MSG.cpp \
 						srcs/Commands/NAMES.cpp \
 						srcs/Commands/NICK.cpp \
+						srcs/Commands/OPER.cpp \
 						srcs/Commands/PART.cpp \
 						srcs/Commands/PASS.cpp \
 						srcs/Commands/PING.cpp \
