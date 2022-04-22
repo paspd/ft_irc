@@ -1,10 +1,9 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-#include "../Rand.hpp"
+#include "../Rand/Rand.hpp"
 #include "../Mode/OccupantChannelMode.hpp"
 #include "../Mode/ChannelMode.hpp"
-// #include "../Mode/Mode.hpp"
 
 class Client;
 
@@ -59,6 +58,8 @@ public:
 
 	std::string getStrOccupant(int const &socketSender);
 
+	std::string getStrMode();
+
 	bool getMode(char const &mode, Client const &client) const;
 
 	int checkClientConnected(Client const &rhs);
@@ -68,9 +69,6 @@ private:
 
 	bool _addOccupant(Client *newOccupant);
 
-	void _addBanAddr(std::string const &banAddr);
-
-	void _delBanAddr(std::string const &banAddr);
 };
 
 std::ostream &	operator<<(std::ostream & o, Channel const & rhs);

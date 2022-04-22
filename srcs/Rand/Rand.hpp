@@ -17,10 +17,13 @@
 #include <sstream>
 #include <algorithm>
 
+
 typedef int SOCKET;
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef socklen_t SOCKLEN_T;
 typedef struct sockaddr SOCKADDR;
+
+// void sendMessage(SOCKET sock, std::string msg);
 
 #define GREY	"\033[30m"
 #define RED		"\033[31m"
@@ -44,7 +47,7 @@ typedef struct sockaddr SOCKADDR;
 #define CREATION_DATE "28.03.2022"
 
 #define USER_MODE_AVAILABLE "iro"
-#define CHAN_MODE_AVAILABLE "ipstnmbkovC"
+#define CHAN_MODE_AVAILABLE "iptnmkovC"
 
 #define MAX_CLIENTS 1024
 #define MAX_OCCUPANTS_CHAN 16
@@ -62,13 +65,18 @@ typedef struct sockaddr SOCKADDR;
 #define RPL_YOURHOST(nickname) (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 002 ") + static_cast<std::string>(nickname) + static_cast<std::string>(" :Your host is ") + static_cast<std::string>(SERVER_NAME) + static_cast<std::string>(", running version ") + static_cast<std::string>(VERSION) + static_cast<std::string>(CRLF))
 #define RPL_CREATED(nickname) (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 003 ") + static_cast<std::string>(nickname) + static_cast<std::string>(" This server was created ") + static_cast<std::string>(CREATION_DATE) + static_cast<std::string>(CRLF))
 #define RPL_MYINFO(nickname) (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 004 ") + static_cast<std::string>(nickname) + static_cast<std::string>(" ") + static_cast<std::string>(SERVER_NAME) + static_cast<std::string>(" ") + static_cast<std::string>(VERSION) + static_cast<std::string>(" ") + static_cast<std::string>(USER_MODE_AVAILABLE) + static_cast<std::string>(" ") + static_cast<std::string>(CHAN_MODE_AVAILABLE) + static_cast<std::string>(" ") + static_cast<std::string>(CRLF))
+#define RPL_UMODEIS(nickname, clientmode) ("221 " + nickname + " " + clientmode + CRLF)
+#define RPL_CHANNELMODEIS(nickname, channelname, channelmode) ("324 " + nickname + " " + channelname + " " + channelmode + CRLF)
 #define RPL_NOTOPIC(channel) (SERVER_NAME_PROMPT + " 331 * " + channel + " :No topic is set" + CRLF)
 #define RPL_TOPIC(channel, topic) (SERVER_NAME_PROMPT + " 332 * " + channel + " :" + topic + CRLF)
 #define RPL_NAMREPLY(nickname, channel, occupants) (SERVER_NAME_PROMPT + " 353 " + nickname + " @ " + channel + " :" + occupants + CRLF)
-#define RPL_ENDOFNAMES(nickname, channel) (SERVER_NAME_PROMPT + " 366 " + nickname + " " + channel + " :End of /NAMES list" + CRLF)
+#define RPL_ENDOFNAMES(nickname, channel) (SERVER_NAME_PROMPT + " 366 " + nickname + " " + channel + " :End of /NAMES list" CRLF)
+#define RPL_BANLIST(nickname, channel, ban, clientprompt) (SERVER_NAME_PROMPT + " 367 " + nickname + " " + channel + " " + ban + " " + clientprompt + CRLF)
+#define RPL_ENDOFBANLIST(channel) (SERVER_NAME_PROMPT + " 368 " + channel + " :End of channel ban list" + CRLF)
 #define ERR_NOSUCHNICK_BUILDER(nickname) (SERVER_NAME_PROMPT + " 401 " + nickname + " :No such nick/channel" + CRLF)
 #define ERR_NOSUCHCHANNEL_BUILDER(channel) (SERVER_NAME_PROMPT + " 403 * " + channel + " :No such channel" + CRLF)
-#define ERR_TOOMANYCHANNELS_BUILDER(channel) (SERVER_NAME_PROMPT + " 405 * " + channel + " :You have joined too many channels" + CRLF)
+#define ERR_TOOMANYCHANNELS_BUILDER(channel) (SERVER_NAME_PROMPT + " 404 * " + channel + " :Cannot send to channel" + CRLF)
+#define ERR_CANNOTSENDTOCHAN_BUILDER(channel) (SERVER_NAME_PROMPT + " 405 * " + channel + " :You have joined too many channels" + CRLF)
 #define ERR_NOTEXTTOSEND_BUILDER(nickname) (SERVER_NAME_PROMPT + " 412 " + nickname + " :No text to send" + CRLF)
 #define ERR_UNKNOWNCOMMAND_BUILDER(command) (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 421 * ") + static_cast<std::string>(command) + static_cast<std::string>(" :Unknown command") + static_cast<std::string>(CRLF))
 #define ERR_ERRONEOUSNICKNAME_BUILDER(nickname) (SERVER_NAME_PROMPT + " 432 * " + nickname + " :Erroneous nickname" + CRLF)
@@ -82,6 +90,9 @@ typedef struct sockaddr SOCKADDR;
 #define ERR_CHANOPRIVSNEEDED_BUILDER(channel) (SERVER_NAME_PROMPT + " 482 * " + channel + " :You're not channel operator" + CRLF)
 
 #define RPL_PRIVMSG_MESSAGE(clientPrompt, nickname, message) (clientPrompt + " PRIVMSG " + nickname + " " + message + CRLF)
+#define RPL_TOPIC_CMD(clientPrompt, channel, topic) (clientPrompt + " TOPIC " + channel + " :" + topic + CRLF)
+#define RPL_MODE_CMD(clientPrompt, channel, mode) (clientPrompt + " MODE " + channel + " :" + mode + CRLF)
+#define RPL_MODE_CUSTOM_CMD(clientPrompt, channel, mode, param) (clientPrompt + " MODE " + channel + " :" + mode + " " + param + CRLF)
 #define RPL_CHAN_MODE(channel) (SERVER_NAME_PROMPT + " MODE " + channel + " " + CHAN_MODE_AVAILABLE + CRLF)
 #define RPL_PART_MESSAGE(clientPrompt, channel, message) (clientPrompt + " PART " + channel + (message[0] == ':' ? " " : " :") + message + CRLF)
 #define RPL_PART_NOMESSAGE(clientPrompt, channel) (clientPrompt + " PART " + channel + CRLF)
@@ -173,14 +184,17 @@ namespace Exception {
 		IRC_EXCEPTION_CUSTOM(ERR_NOSUCHCHANNEL, ERR_NOSUCHCHANNEL_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NOTONCHANNEL, ERR_NOTONCHANNEL_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NOTEXTTOSEND, ERR_NOTEXTTOSEND_BUILDER)
+		IRC_EXCEPTION_CUSTOM(ERR_CANNOTSENDTOCHAN, ERR_CANNOTSENDTOCHAN_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NOSUCHNICK, ERR_NOSUCHNICK_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_CHANOPRIVSNEEDED, ERR_CHANOPRIVSNEEDED_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_QUIT, ERR_QUIT_BUILDER)
 		IRC_EXCEPTION_CUSTOM_2(ERR_USERONCHANNEL, ERR_USERONCHANNEL_BUILDER)
 };
 
-#include "Server/Server.hpp"
-#include "Channel/Channel.hpp"
-#include "Client/Client.hpp"
+#include "../Server/Server.hpp"
+#include "../Channel/Channel.hpp"
+#include "../Client/Client.hpp"
+
+void sendMessage(SOCKET sock, std::string msg);
 
 #endif

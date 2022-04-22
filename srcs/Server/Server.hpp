@@ -3,7 +3,7 @@
 
 #include "../Client/Client.hpp"
 #include "../Channel/Channel.hpp"
-#include "../Rand.hpp"
+#include "../Rand/Rand.hpp"
 
 class Client;
 class Channel;
@@ -46,8 +46,6 @@ public:
 	void checkServerActivity();
 
 	void checkClientActivity();
-
-	void sendMessage(SOCKET sock, std::string msg);
 
 public: //commands
 
@@ -101,7 +99,7 @@ private:
 	
 	void _affAllClients();
 
-	std::string _createClientPrompt(Client const &rhs);
+	
 
 };
 

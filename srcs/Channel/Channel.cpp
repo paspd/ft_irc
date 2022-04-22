@@ -80,24 +80,20 @@ void Channel::setMode(std::string const &mode, Client const &client, std::string
 		break;
 	case 'o':
 		for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++)
-			if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientSocket() == client.getClientSocket())
+			if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientNickname() == argument)
 				_channelOccupantsMode[i].setMode(mode);
-		break;
+		return ;
 	case 'v':
 		for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++)
-			if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientSocket() == client.getClientSocket())
-				_channelOccupantsMode[i].setMode(mode);
-		break;
-	case 'b':
-		(mode[0] == '+' ? _addBanAddr(argument) : _delBanAddr(argument));
-		break;
+			if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientNickname() == argument)
+				_channelOccupantsMode[i].setMode("+c");
+			return ;
 	case 'k':
 		(mode[0] == '+' ? _channelPassword = argument : _channelPassword.erase());
 		break;
 	default:
 		break;
 	}
-		
 	_channelMode.setMode(mode);
 }
 
@@ -178,30 +174,24 @@ void Channel::userSendToChannel(int const socketSender, std::string const &msg) 
 	
 }
 
-void Channel::_addBanAddr(std::string const &banAddr) {
-	for (size_t i = 0; i < _banAddr.size(); i++)
-		if (banAddr == _banAddr[i])
-			return ;
-	_banAddr.push_back(banAddr);
-}
-
-void Channel::_delBanAddr(std::string const &banAddr) {
-	for (std::vector<std::string>::iterator it = _banAddr.begin(); it != _banAddr.end(); it++)
-		if (*it == banAddr)
-			_banAddr.erase(it, it + 1);
-}
-
 std::string Channel::getStrOccupant(int const &socketSender) {
 	std::stringstream ss;
 	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
 		if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientSocket()) {
 			if (!_channelOccupants[i]->getClientMode().getMode('i') || _channelOccupants[i]->getClientSocket() == socketSender)
-				ss << (i != 0 ? " " : "") << (_channelOccupantsMode[i].getMode('C') ? "@" : "") << _channelOccupants[i]->getClientNickname();
+				ss << (i != 0 ? " " : "") << (_channelOccupantsMode[i].getMode('C') ? "@" : "") << (_channelOccupantsMode[i].getMode('o') ? "+" : "") << _channelOccupants[i]->getClientNickname();
 		}
 	}
 	return ss.str();
 }
 
+std::string Channel::getStrMode() {
+	std::stringstream ss;
+	ss << "+" << (_channelMode.getMode('i') ? "i" : "") << (_channelMode.getMode('p') ? "p" : "") << (_channelMode.getMode('t') ? "t" : "") << (_channelMode.getMode('n') ? "n" : "") << (_channelMode.getMode('m') ? "m" : "") << (_channelMode.getMode('k') ? "k" : "");
+	if (ss.str().size() == 1)
+		ss.clear();
+	return ss.str();
+}
 
 std::ostream &	operator<<(std::ostream & o, Channel const & rhs) {
 	o << "channel name :" << rhs.getChannelName() << ", password :" << rhs.getChannelPassword() << std::endl;

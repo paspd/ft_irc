@@ -3,7 +3,7 @@
 
 #include "../Channel/Channel.hpp"
 #include "../Mode/ClientMode.hpp"
-#include "../Rand.hpp"
+#include "../Rand/Rand.hpp"
 
 class Channel;
 
@@ -94,7 +94,11 @@ public:
 
 	bool checkConnected(Channel *channel);
 
+	std::string createClientPrompt() const;
+
 	Client &operator=(Client const &rhs);
+
+	std::string getStrMode();
 
 	Client();
 

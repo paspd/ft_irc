@@ -176,12 +176,26 @@ void Client::_cleanCurrentList() {
 	}
 }
 
+std::string Client::createClientPrompt() const {
+	std::stringstream ss;
+	ss << ":" << _nickname << "!~" << _username << "@" << inet_ntoa(_clientAddress.sin_addr);
+	return ss.str();
+}
+
 bool Client::checkConnected(Channel *channel) {
 	for (size_t i = 0; i < MAX_CURRENT_CHAN; i++) {
 		if (_currentChannels[i] != NULL && _currentChannels[i]->getChannelName() == channel->getChannelName())
 			return true;
 	}
 	return false;
+}
+
+std::string Client::getStrMode() {
+	std::stringstream ss;
+	ss << "+" << (_clientMode.getMode('i') ? "i" : "") << (_clientMode.getMode('r') ? "r" : "") << (_clientMode.getMode('o') ? "o" : "");
+	if (ss.str().size() == 1)
+		ss.clear();
+	return ss.str();
 }
 
 std::ostream &	operator<<(std::ostream & o, Client const & rhs) {
