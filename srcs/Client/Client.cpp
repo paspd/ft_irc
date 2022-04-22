@@ -176,6 +176,14 @@ bool Client::checkConnected(Channel *channel) {
 	return false;
 }
 
+std::string Client::getStrMode() {
+	std::stringstream ss;
+	ss << "+" << (_clientMode.getMode('i') ? "i" : "") << (_clientMode.getMode('r') ? "r" : "") << (_clientMode.getMode('o') ? "o" : "");
+	if (ss.str().size() == 1)
+		ss.clear();
+	return ss.str();
+}
+
 std::ostream &	operator<<(std::ostream & o, Client const & rhs) {
 	o << "nickname :" << rhs.getClientNickname() << ", username :" << rhs.getClientUsername() << ", realname :" << rhs.getClientRealname() << std::endl;
 	for (size_t i = 0; i < MAX_CURRENT_CHAN; i++) {

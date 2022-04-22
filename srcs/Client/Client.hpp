@@ -90,6 +90,8 @@ public:
 
 	Client &operator=(Client const &rhs);
 
+	std::string getStrMode();
+
 	Client();
 
 	~Client();
