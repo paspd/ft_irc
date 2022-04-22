@@ -94,8 +94,8 @@ void Client::resetClient() {
 	_nickname.erase();
 	_username.erase();
 	_realname.erase();
-	// if (_channelInvited)
-	// 	_channelInvited->clear();
+	if (_channelInvited)
+		_channelInvited->clear();
 	_cleanCurrentList();
 }
 
@@ -148,10 +148,10 @@ void Client::leaveAllChannels() {
 	}
 }
 
-// void Client::addInvitation(std::string invitation) {
-// 	_channelInvited->push_back(invitation);
-// 	return ;
-// }
+void Client::addInvitation(std::string invitation) {
+	_channelInvited->push_back(invitation);
+	return ;
+}
 
 Client &Client::operator=(Client const &rhs) {
 	_clientSocket = rhs._clientSocket;
@@ -166,7 +166,7 @@ Client &Client::operator=(Client const &rhs) {
 	_nickname = rhs._nickname;
 	_username = rhs._username;
 	_realname = rhs._realname;
-	// _channelInvited = rhs._channelInvited;
+	_channelInvited = rhs._channelInvited;
 
 	return *this;
 }

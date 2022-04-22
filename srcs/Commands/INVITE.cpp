@@ -14,14 +14,14 @@ void Server::invite(std::vector<std::string> command, int actualClient) {
 	if ((chanIndex = _channelExist(channelName)) >= 0) {
 		if (_channels[chanIndex].checkClientConnected(_clients[actualClient]) < 0)
 			throw Exception::ERR_NOTONCHANNEL(channelName);
-		if (_channels[chanIndex].checkClientConnected(_clients[clientIndex]) < 0)
+		if (_channels[chanIndex].checkClientConnected(_clients[clientIndex]) >= 0)
 			throw Exception::ERR_USERONCHANNEL(clientName, channelName);
 	}
 	if (_channels[chanIndex].getMode('i', _clients[actualClient]))
 		if (!_clients[actualClient].getClientMode().getMode('o'))
 			throw Exception::ERR_CHANOPRIVSNEEDED(channelName);
 
-	// _clients[clientIndex].addInvitation(channelName);
-	// sendMessage(_clients[clientIndex].getClientSocket(), RPL_INVITING(_createClientPrompt(_clients[actualClient]), channelName));
+	_clients[clientIndex].addInvitation(channelName);
+	sendMessage(_clients[clientIndex].getClientSocket(), RPL_INVITING(_clients[clientIndex].createClientPrompt(), channelName));
 	return ;
 }
