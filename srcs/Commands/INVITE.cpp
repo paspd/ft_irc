@@ -18,7 +18,8 @@ void Server::invite(std::vector<std::string> command, int actualClient) {
 			throw Exception::ERR_USERONCHANNEL(clientName, channelName);
 	}
 	if (_channels[chanIndex].getMode('i', _clients[actualClient]))
-		if (!_clients[actualClient].getClientMode().getMode('o'))
+		// if (!_clients[actualClient].getClientMode().getMode('o'))
+		if ()
 			throw Exception::ERR_CHANOPRIVSNEEDED(channelName);
 
 	_clients[clientIndex].addInvitation(channelName);

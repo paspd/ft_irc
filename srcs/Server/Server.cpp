@@ -24,7 +24,7 @@ void Server::createMasterSocket() {
 
 	_masterAddress.sin_family = AF_INET;
 	_masterAddress.sin_addr.s_addr = INADDR_ANY;
-	_masterAddress.sin_port = htons(_port);h
+	_masterAddress.sin_port = htons(_port);
 
 	_masterAddressLength = sizeof(_masterAddress);
 }
