@@ -30,7 +30,7 @@ private:
 	std::string _username;
 	std::string _realname;
 
-	std::vector<std::string> *_channelInvited;
+	std::vector<std::string> _channelInvited;
 
 	Channel *_currentChannels[MAX_CURRENT_CHAN];
 

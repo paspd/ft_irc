@@ -40,10 +40,8 @@ std::string Client::getClientRealname() const {
 	return _realname;
 }
 
-std::vector<std::string> *Client::getChannelInvited() const {
-	if (_channelInvited)
-		return _channelInvited;
-	return NULL;
+std::vector<std::string> Client::getChannelInvited() const {
+	return _channelInvited;
 }
 
 ClientMode Client::getClientMode() const {
@@ -94,8 +92,7 @@ void Client::resetClient() {
 	_nickname.erase();
 	_username.erase();
 	_realname.erase();
-	if (_channelInvited)
-		_channelInvited->clear();
+	_channelInvited.clear();
 	_cleanCurrentList();
 }
 
