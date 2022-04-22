@@ -31,7 +31,10 @@ private:
 	std::string _realname;
 
 	std::vector<std::string> _channelInvited;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 32a4c792a8b7f491231a0f5104e632329d173c5f
 
 	Channel *_currentChannels[MAX_CURRENT_CHAN];
 

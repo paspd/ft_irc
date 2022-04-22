@@ -40,5 +40,5 @@ void Server::mode(std::vector<std::string> command, int actualClient) {
 		}
 		else throw Exception::ERR_NOSUCHCHANNEL(command[1]);
 	}
-	else throw Exception::ERR_USERSDONTMATCH();
+	else throw Exception::ERR_USERSDONTMATCH(_clients[actualClient].getClientNickname());
 }

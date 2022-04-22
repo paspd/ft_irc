@@ -65,6 +65,11 @@ void Client::setClientRealname(std::string realname) {
 }
 
 void Client::setClientMode(std::string const &mode) {
+	if (mode.size() < 2)
+			return ;
+	bool val = (mode[0] == '+' ? true : false);
+	if (mode[2] == 'r' && val)
+		return ;
 	_clientMode.setMode(mode);
 }
 

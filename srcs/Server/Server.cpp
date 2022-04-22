@@ -138,16 +138,16 @@ void Server::checkClientActivity() {
 						invite(command, actualClient);
 					else if (command[0] == "JOIN")
 						join(command, actualClient);
-					else if (command[0] == "KILL")
-						kill(command, actualClient);
 					else if (command[0] == "MODE")
 						mode(command, actualClient);
 					else if (command[0] == "MSG" || command[0] == "PRIVMSG")
 						msg(command, actualClient);
-					// else if (command[0] == "NAMES")
-						// names(command, actualClient);
+					else if (command[0] == "NAMES")
+						names(command, actualClient);
 					else if (command[0] == "NICK")
 						nick(command, actualClient);
+					else if (command[0] == "OPER")
+						oper(command, actualClient);
 					else if (command[0] == "PART")
 						part(command, actualClient);
 					else if (command[0] == "PASS")
