@@ -15,7 +15,7 @@ private:
 	SOCKET _clientSocket;
 	SOCKADDR_IN _clientAddress;
 	SOCKLEN_T _clientAddressLength;
-	
+
 	ClientMode _clientMode;
 
 	std::string _clientID;
@@ -30,10 +30,12 @@ private:
 	std::string _username;
 	std::string _realname;
 
+	std::vector<std::string> *_channelInvited;
+
 	Channel *_currentChannels[MAX_CURRENT_CHAN];
 
 public:
-	
+
 	Channel *getCurrentChannel(int i) const;
 
 	int getClientSocket() const;
@@ -56,6 +58,8 @@ public:
 
 	std::string getClientRealname() const;
 
+	std::vector<std::string> *getChannelInvited() const;
+
 	void setClientSocket(int newSocketID);
 
 	void setClientMode(std::string const &mode);
@@ -66,6 +70,8 @@ public:
 
 	void setClientRealname(std::string realname);
 
+	void setChannelInvited(std::vector<std::string> *channelInvited);
+
 	void setClientAddress(SOCKADDR_IN newAdress);
 
 	void resetClient();
@@ -73,7 +79,7 @@ public:
 	void passBoolClient();
 
 	void userBoolClient();
-	
+
 	void nickBoolClient();
 
 	void welcomeBoolClient();
@@ -83,7 +89,9 @@ public:
 	void leaveAllChannels();
 
 	void leaveChannel(std::string channelName);
-	
+
+	void addInvitation(std::string invitation);
+
 	bool checkConnected(Channel *channel);
 
 	Client &operator=(Client const &rhs);
@@ -95,7 +103,6 @@ public:
 private:
 
 	void _cleanCurrentList();
-
 };
 
 std::ostream &	operator<<(std::ostream & o, Client const & rhs);

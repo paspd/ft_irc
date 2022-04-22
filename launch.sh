@@ -2,6 +2,6 @@ for i in {1..10}
 do
     rm -rf ircserv
     make
-    clear
+    # clear
     ./ircserv $i "hello"
 done

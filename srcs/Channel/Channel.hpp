@@ -69,7 +69,7 @@ private:
 	bool _addOccupant(Client *newOccupant);
 
 	void _addBanAddr(std::string const &banAddr);
-	
+
 	void _delBanAddr(std::string const &banAddr);
 };
 
