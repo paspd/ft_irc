@@ -92,7 +92,9 @@ void Client::resetClient() {
 	_nickname.erase();
 	_username.erase();
 	_realname.erase();
-	_channelInvited.clear();
+	if (_channelInvited.empty())
+		_channelInvited.clear();
+	_channelInvited.reserve(MAX_SERV_CHAN);
 	_cleanCurrentList();
 }
 
