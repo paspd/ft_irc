@@ -24,7 +24,7 @@ void Server::createMasterSocket() {
 
 	_masterAddress.sin_family = AF_INET;
 	_masterAddress.sin_addr.s_addr = INADDR_ANY;
-	_masterAddress.sin_port = htons(_port);
+	_masterAddress.sin_port = htons(_port);h
 
 	_masterAddressLength = sizeof(_masterAddress);
 }
@@ -161,7 +161,7 @@ void Server::checkClientActivity() {
 					else if (command[0] == "QUIT")
 						exit(0);
 					else throw Exception::ERR_UNKNOWNCOMMAND(command[0]);
-					
+
 					if (!_clients[actualClient].getWelcomeBool() && _clients[actualClient].getPassBool() && _clients[actualClient].getNickBool() && _clients[actualClient].getUserBool()) {
 						sendMessage(CLIENT_SOCKET, RPL_WELCOME(_clients[actualClient].getClientNickname(), _clients[actualClient].getClientUsername(), inet_ntoa(_clients[actualClient].getClientAddress().sin_addr)));
 						sendMessage(CLIENT_SOCKET, RPL_YOURHOST(_clients[actualClient].getClientNickname()));
