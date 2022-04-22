@@ -40,7 +40,7 @@ public:
 		
 	}
 
-	//a i w r o
+	//i r o
 	bool getMode(char c) {
 		if (c == 'i')
 			return _invisible;
