@@ -7,5 +7,5 @@ void Server::oper(std::vector<std::string> command, int actualClient) {
 	if (command[2] != OPER_MDP) throw Exception::ERR_PASSWDMISMATCH();
 
 	_clients[actualClient].getClientMode().setMode("+o");
-
+	sendMessage(CLIENT_SOCKET, RPL_YOUREOPER(_clients[actualClient].createClientPrompt()));
 }
