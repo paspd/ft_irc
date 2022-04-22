@@ -30,7 +30,8 @@ private:
 	std::string _username;
 	std::string _realname;
 
-	std::vector<std::string> *_channelInvited;
+	std::vector<std::string> _channelInvited;
+
 
 	Channel *_currentChannels[MAX_CURRENT_CHAN];
 
@@ -58,7 +59,7 @@ public:
 
 	std::string getClientRealname() const;
 
-	std::vector<std::string> *getChannelInvited() const;
+	std::vector<std::string> getChannelInvited() const;
 
 	void setClientSocket(int newSocketID);
 
