@@ -68,9 +68,13 @@ void Client::setClientMode(std::string const &mode) {
 	if (mode.size() < 2)
 			return ;
 	bool val = (mode[0] == '+' ? true : false);
-	if (mode[2] == 'r' && val)
-		return ;
-	_clientMode.setMode(mode);
+	AFF("test");
+	if ((mode[1] == 'r' && val) || _clientMode._OP)
+		_clientMode._restricted = val;
+	else if (mode[1] == 'i')
+		_clientMode._invisible = val;
+	else if (mode[1] == 'o' && val && _clientMode._OP)
+		_clientMode._OP = val;
 }
 
 void Client::setClientAddress(SOCKADDR_IN newAdress) {
@@ -79,7 +83,9 @@ void Client::setClientAddress(SOCKADDR_IN newAdress) {
 }
 
 void Client::resetClient() {
-	_clientMode.reset();
+	_clientMode._invisible = false;
+	_clientMode._restricted = false;
+	_clientMode._OP = false;
 	_clientSocket = 0;
 	_clientAddress.sin_family = 0;
 	_clientAddress.sin_addr.s_addr = 0;
@@ -196,10 +202,14 @@ bool Client::checkConnected(Channel *channel) {
 
 std::string Client::getStrMode() {
 	std::stringstream ss;
-	ss << "+" << (_clientMode.getMode('i') ? "i" : "") << (_clientMode.getMode('r') ? "r" : "") << (_clientMode.getMode('o') ? "o" : "");
+	ss << "+" << (_clientMode._invisible ? "i" : "") << (_clientMode._restricted ? "r" : "") << (_clientMode._OP ? "o" : "");
 	if (ss.str().size() == 1)
 		ss.clear();
 	return ss.str();
+}
+
+void Client::setOP(bool const &val) {
+	_clientMode._OP = val;
 }
 
 std::ostream &	operator<<(std::ostream & o, Client const & rhs) {

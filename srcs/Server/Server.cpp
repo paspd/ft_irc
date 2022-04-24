@@ -138,6 +138,8 @@ void Server::checkClientActivity() {
 						invite(command, actualClient);
 					else if (command[0] == "JOIN")
 						join(command, actualClient);
+					else if (command[0] == "KICK")
+						kick(command, actualClient);
 					else if (command[0] == "MODE")
 						mode(command, actualClient);
 					else if (command[0] == "MSG" || command[0] == "PRIVMSG")

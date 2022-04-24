@@ -2,7 +2,15 @@ NAME			=		ircserv
 
 CC				=		clang++
 
-CFLAGS			=		-Wall -Werror -Wextra -std=c++98
+CFLAGS			=		-Wall -Werror -Wextra -std=c++98 -g
+
+INCLUDES		=		srcs/Server/Server.hpp \
+						srcs/Client/Client.hpp \
+						srcs/Channel/Channel.hpp \
+						srcs/Mode/OccupantChannelMode.hpp \
+						srcs/Mode/ChannelMode.hpp \
+						srcs/Mode/ClientMode.hpp \
+						srcs/Rand/Rand.hpp
 
 SRCS			=		srcs/main.cpp \
 						srcs/Server/Server.cpp \
@@ -10,6 +18,7 @@ SRCS			=		srcs/main.cpp \
 						srcs/Channel/Channel.cpp \
 						srcs/Commands/INVITE.cpp \
 						srcs/Commands/JOIN.cpp \
+						srcs/Commands/KICK.cpp \
 						srcs/Commands/MODE.cpp \
 						srcs/Commands/MSG.cpp \
 						srcs/Commands/NAMES.cpp \
@@ -31,7 +40,7 @@ $(NAME)		: $(OBJS)
 		@$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 		@echo "\033[34m[$(NAME)] Compiled\033[0m"
 
-%.o: %.cpp
+%.o: %.cpp $(INCLUDES)
 		@$(CC) $(CFLAGS) -c $< -o $@
 
 clean		:

@@ -105,6 +105,14 @@ int Channel::checkClientConnected(Client const &rhs) {
 	return -1;
 }
 
+int Channel::checkClientConnected(std::string const &client) {
+	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
+		if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientNickname() == client)
+			return i;
+	}
+	return -1;
+}
+
 void Channel::_cleanChannelOccupants() {
 	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
 		_channelOccupants[i] = NULL;
@@ -139,6 +147,18 @@ void Channel::delOccupant(int const socket) {
 	throw Exception::ERR_NOTONCHANNEL(_channelName);
 };
 
+void Channel::delOccupant(std::string const name) {
+	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++)
+	{
+		if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientNickname() == name) {
+			_channelOccupants[i] = NULL;
+			_channelOccupantsMode[i].reset();
+			return ;
+		}
+	}
+	throw Exception::ERR_NOTONCHANNEL(_channelName);
+};
+
 int Channel::checkIfClient() {
 	int nb_client = 0;
 	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
@@ -153,6 +173,7 @@ void Channel::sendToAllChannel(std::string const &msg) {
 	ssize_t ret_send = 0;
 	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
 		if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientSocket()) {
+			std::cout << "MSG :" << msg << std::endl;
 			ret_send = send(_channelOccupants[i]->getClientSocket(), msg.c_str(), msgSize, 0);
 			if (ret_send != (ssize_t)msgSize)
 				throw Exception::SendFailed();
@@ -178,7 +199,7 @@ std::string Channel::getStrOccupant(int const &socketSender) {
 	std::stringstream ss;
 	for (size_t i = 0; i < MAX_OCCUPANTS_CHAN; i++) {
 		if (_channelOccupants[i] != NULL && _channelOccupants[i]->getClientSocket()) {
-			if (!_channelOccupants[i]->getClientMode().getMode('i') || _channelOccupants[i]->getClientSocket() == socketSender)
+			if (!_channelOccupants[i]->getClientMode()._invisible || _channelOccupants[i]->getClientSocket() == socketSender)
 				ss << (i != 0 ? " " : "") << (_channelOccupantsMode[i].getMode('C') ? "@" : "") << (_channelOccupantsMode[i].getMode('o') ? "+" : "") << _channelOccupants[i]->getClientNickname();
 		}
 	}
