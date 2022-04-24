@@ -11,8 +11,7 @@ void Server::mode(std::vector<std::string> command, int actualClient) {
 			std::vector<std::string> modeList = _splitWithDelimiters(command[2], "+-");
 			for (size_t i = 0; i < modeList.size(); i++)
 				_clients[actualClient].setClientMode(modeList[i]);
-
-			for (int i = 0; USER_MODE_AVAILABLE[i]; i++) { std::cout << "| " << USER_MODE_AVAILABLE[i] << ": " << _clients[actualClient].getClientMode().getMode(USER_MODE_AVAILABLE[i]) << " "; } std::cout << " |" << std::endl;
+			sendMessage(CLIENT_SOCKET, RPL_UMODEIS(_clients[actualClient].getClientNickname(), _clients[actualClient].getStrMode()));
 		}
 		else throw Exception::ERR_UMODEUNKNOWNFLAG();
 	}
@@ -20,12 +19,15 @@ void Server::mode(std::vector<std::string> command, int actualClient) {
 		int chanIndex = 0;
 		if ((chanIndex = _channelExist(command[1])) >= 0) {
 			if (_channels[chanIndex].checkClientConnected(_clients[actualClient]) >= 0) {
-				if (command.size() == 2 || _checkChannelModeList(command[2])) {
+				if (_clients[actualClient].getClientMode()._restricted) throw Exception::ERR_RESTRICTED(_clients[actualClient].getClientNickname());
+				else if (command.size() == 2) sendMessage(CLIENT_SOCKET, RPL_CHANNELMODEIS(_clients[actualClient].getClientNickname(), _channels[chanIndex].getChannelName(), _channels[chanIndex].getStrMode()));
+				else if (_checkChannelModeList(command[2])) {
 					if (_channels[chanIndex].getMode('o', _clients[actualClient]) || _channels[chanIndex].getMode('C', _clients[actualClient])) {
 						if (command.size() == 2)
 							sendMessage(CLIENT_SOCKET, RPL_CHANNELMODEIS(_clients[actualClient].getClientNickname(), command[1], _channels[chanIndex].getStrMode()));
 						else if (command[2].find_first_of("bko") != std::string::npos) {
 							_channels[chanIndex].setMode(command[2], _clients[actualClient], command[3]);
+							_channels[chanIndex].sendToAllChannel(RPL_MODE_CUSTOM_CMD(_clients[actualClient].createClientPrompt(), command[1], command[2], command[3]));
 							return ;
 						}
 						_channels[chanIndex].setMode(command[2], _clients[actualClient]);

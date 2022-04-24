@@ -2,6 +2,7 @@
 
 void Server::topic(std::vector<std::string> command, int actualClient) {
 	if (!_clients[actualClient].getWelcomeBool()) throw Exception::ERR_NOTREGISTERED();
+	if (_clients[actualClient].getClientMode()._restricted) throw Exception::ERR_RESTRICTED(_clients[actualClient].getClientNickname());
 	if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 
 	int indexChan = 0;

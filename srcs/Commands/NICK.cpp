@@ -2,6 +2,7 @@
 
 void Server::nick(std::vector<std::string> command, int actualClient) {
 	if (!_clients[actualClient].getPassBool()) throw Exception::ERR_NOTREGISTERED();
+	if (_clients[actualClient].getClientMode()._restricted) throw Exception::ERR_RESTRICTED(_clients[actualClient].getClientNickname());
 	if (command.size() < 2) throw Exception::ERR_NEEDMOREPARAMS(command[0]);
 	if (command.size() > 3) throw Exception::ERR_NONICKNAMEGIVEN();
 	if (!_checkValidityNick(command[1])) throw Exception::ERR_ERRONEOUSNICKNAME(command[1]);

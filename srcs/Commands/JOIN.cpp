@@ -27,19 +27,19 @@ void Server::join(std::vector<std::string> command, int actualClient) {
 				_channels[k].connectToChan(&_clients[actualClient], (chanPass.size() >= j && command.size() == 3 ? chanPass[j] : ""));
 				if (!_clients[actualClient].addChannel(&_channels[k])){
 					_channels[k].delOccupant(_clients[actualClient].getClientSocket());
-					throw Exception::ERR_TOOMANYCHANNELS(chanName[j]);
+					throw Exception::ERR_TOOMANYCHANNELS(_clients[actualClient].getClientNickname(), chanName[j]);
 				}
 				else {
+				_channels[k].setMode("+n", _clients[actualClient]);
 				sendMessage(CLIENT_SOCKET, _clients[actualClient].createClientPrompt() + " JOIN " + _channels[k].getChannelName() + CRLF);
 				_channels[k].userSendToChannel(_clients[actualClient].getClientSocket(), _clients[actualClient].createClientPrompt() + " JOIN " + _channels[k].getChannelName() + CRLF);
-				sendMessage(CLIENT_SOCKET, RPL_CHAN_MODE(_channels[k].getChannelName()));
+				sendMessage(CLIENT_SOCKET, RPL_CHAN_MODE(_channels[k].getChannelName(), _channels[k].getStrMode()));
 				sendMessage(CLIENT_SOCKET, RPL_NAMREPLY(_clients[actualClient].getClientNickname(), _channels[k].getChannelName(), _channels[k].getStrOccupant(CLIENT_SOCKET)));
 				sendMessage(CLIENT_SOCKET, RPL_ENDOFNAMES(_clients[actualClient].getClientNickname(), _channels[k].getChannelName()));
 				if (!_channels[k].getChannelTopic().empty())
 					sendMessage(CLIENT_SOCKET, RPL_TOPIC(_channels[k].getChannelName(), _channels[k].getChannelTopic()));
 				else
 					sendMessage(CLIENT_SOCKET, RPL_NOTOPIC(_channels[k].getChannelName()));
-				_channels[k].setMode("+n", _clients[actualClient]);
 				}
 
 			}

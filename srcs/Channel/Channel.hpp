@@ -50,6 +50,8 @@ public:
 
 	void delOccupant(int const socket);
 
+	void delOccupant(std::string const name);
+	
 	void sendToAllChannel(std::string const &msg);
 
 	void userSendToChannel(int const socketSender, std::string const &msg);
@@ -64,6 +66,7 @@ public:
 
 	int checkClientConnected(Client const &rhs);
 
+	int checkClientConnected(std::string const &client);
 private:
 	void _cleanChannelOccupants();
 

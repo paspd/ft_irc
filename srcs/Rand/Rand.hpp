@@ -1,6 +1,8 @@
 #ifndef RAND_HPP
 #define RAND_HPP
 
+#define AFF(thing) (std::cout << thing << std::endl)
+
 #include <stdio.h>
 #include <string.h>   //strlen
 #include <string>
@@ -78,27 +80,30 @@ typedef struct sockaddr SOCKADDR;
 #define RPL_YOUREOPER(clientprompt) (clientprompt + " 381 " + " :You are now an IRC operator" + CRLF)
 #define ERR_NOSUCHNICK_BUILDER(nickname) (SERVER_NAME_PROMPT + " 401 " + nickname + " :No such nick/channel" + CRLF)
 #define ERR_NOSUCHCHANNEL_BUILDER(channel) (SERVER_NAME_PROMPT + " 403 " + channel + " :No such channel" + CRLF)
-#define ERR_TOOMANYCHANNELS_BUILDER(channel) (SERVER_NAME_PROMPT + " 404 " + channel + " :Cannot send to channel" + CRLF)
-#define ERR_CANNOTSENDTOCHAN_BUILDER(channel) (SERVER_NAME_PROMPT + " 405 " + channel + " :You have joined too many channels" + CRLF)
+#define ERR_TOOMANYCHANNELS_BUILDER(nickname, channel) (SERVER_NAME_PROMPT + " 404 " + nickname + " " + channel + " :You have joined too many channels" + CRLF)
+#define ERR_CANNOTSENDTOCHAN_BUILDER(nickname, channel) (SERVER_NAME_PROMPT + " 405 " + nickname + " " + channel + " :Cannot send to channel" + CRLF)
 #define ERR_NOTEXTTOSEND_BUILDER(nickname) (SERVER_NAME_PROMPT + " 412 " + nickname + " :No text to send" + CRLF)
 #define ERR_UNKNOWNCOMMAND_BUILDER(command) (static_cast<std::string>(SERVER_NAME_PROMPT) + static_cast<std::string>(" 421 ") + static_cast<std::string>(command) + static_cast<std::string>(" :Unknown command") + static_cast<std::string>(CRLF))
 #define ERR_ERRONEOUSNICKNAME_BUILDER(nickname) (SERVER_NAME_PROMPT + " 432 " + nickname + " :Erroneous nickname" + CRLF)
 #define ERR_NICKNAMEINUSE_BUILDER(nickname) (SERVER_NAME_PROMPT + " 433 " + nickname + " :Nickname is already in use" + CRLF)
 #define ERR_NICKCOLLISION_BUILDER(nickname) (SERVER_NAME_PROMPT + " 436 " + nickname + " :Nickname collision" + CRLF)
+#define ERR_USERNOTINCHANNEL_BUILDER(nickname, channel) (SERVER_NAME_PROMPT + " 441 " + nickname + " " + channel + " :They aren't on that channel" + CRLF)
 #define ERR_NOTONCHANNEL_BUILDER(channel) (SERVER_NAME_PROMPT + " 442 " + channel + " :You're not on that channel" + CRLF)
 #define ERR_USERONCHANNEL_BUILDER(nickname, channel) (SERVER_NAME_PROMPT + " 443 " + channel + " :User " + nickname + " is already on the channel" + CRLF)
 #define ERR_NEEDMOREPARAMS_BUILDER(command) (SERVER_NAME_PROMPT + " 461 " + command + " :Not enough parameters" + CRLF)
 #define ERR_CHANNELISFULL_BUILDER(channel) (SERVER_NAME_PROMPT + " 471 " + channel + " :Cannot join channel (+l)" + CRLF)
 #define ERR_BADCHANNELKEY_BUILDER(channel) (SERVER_NAME_PROMPT + " 475 " + channel + " :Cannot join channel (+k)" + CRLF)
 #define ERR_CHANOPRIVSNEEDED_BUILDER(channel) (SERVER_NAME_PROMPT + " 482 " + channel + " :You're not channel operator" + CRLF)
+#define ERR_RESTRICTED_BUILDER(nickname) (SERVER_NAME_PROMPT + " 482 " + nickname + " :Your connection is restricted!" + CRLF)
 #define ERR_USERSDONTMATCH_BUILDER(nickname) (SERVER_NAME_PROMPT + " 502 " + nickname + " :Can't change mode for other users" + CRLF)
 
 #define RPL_PRIVMSG_MESSAGE(clientPrompt, nickname, message) (clientPrompt + " PRIVMSG " + nickname + " " + message + CRLF)
 #define RPL_TOPIC_CMD(clientPrompt, channel, topic) (clientPrompt + " TOPIC " + channel + " :" + topic + CRLF)
 #define RPL_MODE_CMD(clientPrompt, channel, mode) (clientPrompt + " MODE " + channel + " :" + mode + CRLF)
 #define RPL_MODE_CUSTOM_CMD(clientPrompt, channel, mode, param) (clientPrompt + " MODE " + channel + " :" + mode + " " + param + CRLF)
-#define RPL_CHAN_MODE(channel) (SERVER_NAME_PROMPT + " MODE " + channel + " " + CHAN_MODE_AVAILABLE + CRLF)
+#define RPL_CHAN_MODE(channel, mode) (SERVER_NAME_PROMPT + " MODE " + channel + " " + mode + CRLF)
 #define RPL_PART_MESSAGE(clientPrompt, channel, message) (clientPrompt + " PART " + channel + (message[0] == ':' ? " " : " :") + message + CRLF)
+#define RPL_KICK_CMD(clientPrompt, nickname, channel, message) (clientPrompt + " KICK " + nickname + " " + channel + (message.empty() ? "" : (message[0] == ':' ? " " : " :")) + message + CRLF)
 #define RPL_PART_NOMESSAGE(clientPrompt, channel) (clientPrompt + " PART " + channel + CRLF)
 #define RPL_PONG() (SERVER_NAME_PROMPT + " PONG " + SERVER_NAME  + " " + SERVER_NAME_PROMPT +  CRLF)
 #define RPL_INVITING(clientPrompt, channel) (clientPrompt + " INVITE " + channel + CRLF)
@@ -173,7 +178,6 @@ namespace Exception {
 		IRC_EXCEPTION(ERR_NOTREGISTERED, "451 :You have not registered\r\n")
 		IRC_EXCEPTION(ERR_PASSWDMISMATCH, "464 * PASS :Password incorrect\r\n")
 		IRC_EXCEPTION(ERR_ALREADYREGISTERED, "462 * PASS :Unauthorized command (already registered)\r\n")
-		IRC_EXCEPTION(ERR_RESTRICTED, "484 :Your connection is restricted!\r\n")
 		IRC_EXCEPTION(ERR_UMODEUNKNOWNFLAG, " 501 :Unknown MODE flag\r\n")
 		IRC_EXCEPTION(ERR_NOPRIVILEGES, " 481 :Permission Denied- You're not an IRC operator\r\n")
 		IRC_EXCEPTION_CUSTOM(ERR_UNKNOWNCOMMAND, ERR_UNKNOWNCOMMAND_BUILDER)
@@ -183,16 +187,18 @@ namespace Exception {
 		IRC_EXCEPTION_CUSTOM(ERR_NICKNAMEINUSE, ERR_NICKNAMEINUSE_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_BADCHANNELKEY, ERR_BADCHANNELKEY_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_CHANNELISFULL, ERR_CHANNELISFULL_BUILDER)
-		IRC_EXCEPTION_CUSTOM(ERR_TOOMANYCHANNELS, ERR_TOOMANYCHANNELS_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NOSUCHCHANNEL, ERR_NOSUCHCHANNEL_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NOTONCHANNEL, ERR_NOTONCHANNEL_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NOTEXTTOSEND, ERR_NOTEXTTOSEND_BUILDER)
-		IRC_EXCEPTION_CUSTOM(ERR_CANNOTSENDTOCHAN, ERR_CANNOTSENDTOCHAN_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_NOSUCHNICK, ERR_NOSUCHNICK_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_CHANOPRIVSNEEDED, ERR_CHANOPRIVSNEEDED_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_USERSDONTMATCH, ERR_USERSDONTMATCH_BUILDER)
+		IRC_EXCEPTION_CUSTOM(ERR_RESTRICTED, ERR_RESTRICTED_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_QUIT, ERR_QUIT_BUILDER)
 		IRC_EXCEPTION_CUSTOM_2(ERR_USERONCHANNEL, ERR_USERONCHANNEL_BUILDER)
+		IRC_EXCEPTION_CUSTOM_2(ERR_TOOMANYCHANNELS, ERR_TOOMANYCHANNELS_BUILDER)
+		IRC_EXCEPTION_CUSTOM_2(ERR_CANNOTSENDTOCHAN, ERR_CANNOTSENDTOCHAN_BUILDER)
+		IRC_EXCEPTION_CUSTOM_2(ERR_USERNOTINCHANNEL, ERR_USERNOTINCHANNEL_BUILDER)
 };
 
 #include "../Server/Server.hpp"

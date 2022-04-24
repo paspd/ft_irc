@@ -52,6 +52,8 @@ public: //commands
 	void invite(std::vector<std::string> command, int actualClient);
 
 	void join(std::vector<std::string> command, int actualClient);
+	
+	void kick(std::vector<std::string> command, int actualClient);
 
 	void mode(std::vector<std::string> command, int actualClient);
 

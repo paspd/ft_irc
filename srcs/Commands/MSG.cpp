@@ -24,8 +24,9 @@ void Server::msg(std::vector<std::string> command, int actualClient) {
 					else
 						_channels[index].userSendToChannel(_clients[actualClient].getClientSocket(), RPL_PRIVMSG_MESSAGE(_clients[actualClient].createClientPrompt(), clientName[i], message));
 					}
+					else throw Exception::ERR_CANNOTSENDTOCHAN(_clients[actualClient].getClientNickname(), clientName[i]);
 				}
-				else throw Exception::ERR_CANNOTSENDTOCHAN(clientName[i]);
+				else throw Exception::ERR_NOTONCHANNEL(clientName[i]);
 			}
 			else
 				throw Exception::ERR_NOSUCHNICK(clientName[i]);

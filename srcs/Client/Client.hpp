@@ -2,12 +2,22 @@
 #define CLIENT_HPP
 
 #include "../Channel/Channel.hpp"
-#include "../Mode/ClientMode.hpp"
 #include "../Rand/Rand.hpp"
 
 class Channel;
 
-class ClientMode;
+struct ClientMode
+{
+	//i
+	bool _invisible;
+
+	//r
+	bool _restricted;
+
+	//o
+	bool _OP;
+};
+
 
 class Client
 {
@@ -16,9 +26,9 @@ private:
 	SOCKADDR_IN _clientAddress;
 	SOCKLEN_T _clientAddressLength;
 
-	ClientMode _clientMode;
-
 	std::string _clientID;
+
+	ClientMode _clientMode;
 
 	bool _passBool;
 	bool _nickBool;
@@ -74,6 +84,8 @@ public:
 
 	void setClientAddress(SOCKADDR_IN newAdress);
 
+	void setOP(bool const &val);
+	
 	void resetClient();
 
 	void passBoolClient();
