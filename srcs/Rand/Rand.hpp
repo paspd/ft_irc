@@ -109,7 +109,7 @@ typedef struct sockaddr SOCKADDR;
 #define RPL_PART_NOMESSAGE(clientPrompt, channel) (clientPrompt + " PART " + channel + CRLF)
 #define RPL_PONG() (SERVER_NAME_PROMPT + " PONG " + SERVER_NAME  + " " + SERVER_NAME_PROMPT +  CRLF)
 #define RPL_INVITING(clientPrompt, channel, nickname, clientName) (clientPrompt + " 341 " + clientName + " " + nickname + " " + channel + CRLF)
-#define RPL_INVITED(clientPrompt, nickname, channel) (clientPrompt + " INVITE " + nickname + " :" + channel)
+#define RPL_INVITED(clientPrompt, nickname, channel) (clientPrompt + " INVITE " + nickname + " :" + channel + CRLF)
 #define RPL_QUIT(clientPrompt) (clientPrompt + " QUIT :Client Quit" + CRLF)
 #define RPL_QUIT_CUSTOM(clientPrompt, message) (clientPrompt + " QUIT " + (message[0] == ':' ? message : ":" + message) + CRLF)
 

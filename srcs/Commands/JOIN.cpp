@@ -20,17 +20,6 @@ void Server::join(std::vector<std::string> command, int actualClient) {
 	{
 		if (_channelExist(chanName[j]) < 0)
 			if (chanName[0].find_first_of("#!&+") != 0 || (!_createChannel(chanName[j], (chanPass.size() >= j && command.size() == 3 ? chanPass[j] : "")) && (newChan = true))) throw Exception::ERR_NOSUCHCHANNEL(chanName[j]);
-		// int chanIndex = _channelExist(chanName[j]);
-		// if (chanIndex >= 0) {
-		// 	bool invited = false;
-		// 	if (_channels[chanIndex].getMode('i', _clients[actualClient])) {
-		// 		for (int i = 0; _clients[actualClient].getChannelInvited()[i].size() > 0; i++) {
-		// 			if (_clients[actualClient].getChannelInvited()[i] == chanName[j])
-		// 				invited = true;
-		// 		}
-		// 		if (!invited)
-		// 	}
-		// }
 		for (size_t k = 0; k < MAX_SERV_CHAN; k++) {
 			if (_channels[k].getChannelName().size() && _channels[k].getChannelName() == chanName[j]) {
 				if (_channels[k].getMode('i', _clients[actualClient]) && !_clients[actualClient].checkInvited(chanName[j]))
