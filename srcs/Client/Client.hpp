@@ -112,6 +112,8 @@ public:
 
 	std::string getStrMode();
 
+	void sendToAllCurrent(std::string msg);
+
 	Client();
 
 	~Client();

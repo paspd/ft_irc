@@ -132,6 +132,9 @@ void Server::checkClientActivity() {
 					}
 					std::cout << END << std::endl << std::endl;
 
+					for (std::string::iterator it = command[0].begin(); it != command[0].end(); it++)
+						*it = ::toupper(*it);
+
 					try {
 
 					if (command[0] == "INVITE")
@@ -148,6 +151,8 @@ void Server::checkClientActivity() {
 						names(command, actualClient);
 					else if (command[0] == "NICK")
 						nick(command, actualClient);
+					else if (command[0] == "NOTICE")
+						notice(command, actualClient);
 					else if (command[0] == "OPER")
 						oper(command, actualClient);
 					else if (command[0] == "PART")
@@ -156,12 +161,12 @@ void Server::checkClientActivity() {
 						pass(command, actualClient);
 					else if (command[0] == "PING")
 						ping(command, actualClient);
+					else if (command[0] == "QUIT")
+						quit(command, actualClient);
 					else if (command[0] == "TOPIC")
 						topic(command, actualClient);
 					else if (command[0] == "USER")
 						user(command, actualClient);
-					else if (command[0] == "QUIT")
-						exit(0);
 					else throw Exception::ERR_UNKNOWNCOMMAND(command[0]);
 
 					if (!_clients[actualClient].getWelcomeBool() && _clients[actualClient].getPassBool() && _clients[actualClient].getNickBool() && _clients[actualClient].getUserBool()) {

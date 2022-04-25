@@ -63,6 +63,8 @@ public: //commands
 
 	void nick(std::vector<std::string> command, int actualClient);
 
+	void notice(std::vector<std::string> command, int actualClient);
+
 	void oper(std::vector<std::string> command, int actualClient);
 	
 	void part(std::vector<std::string> command, int actualClient);
@@ -71,6 +73,8 @@ public: //commands
 
 	void ping(std::vector<std::string> command, int actualClient);
 
+	void quit(std::vector<std::string> command, int actualClient);
+	
 	void topic(std::vector<std::string> command, int actualClient);
 
 	void user(std::vector<std::string> command, int actualClient);
