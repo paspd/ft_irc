@@ -106,6 +106,8 @@ public:
 
 	bool checkConnected(Channel *channel);
 
+	bool checkInvited(std::string channelName);
+
 	std::string createClientPrompt() const;
 
 	Client &operator=(Client const &rhs);

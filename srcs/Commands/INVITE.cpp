@@ -18,9 +18,8 @@ void Server::invite(std::vector<std::string> command, int actualClient) {
 			throw Exception::ERR_USERONCHANNEL(clientName, channelName);
 	}
 	if (_channels[chanIndex].getMode('i', _clients[actualClient]))
-		if (!_clients[actualClient].getClientMode()._OP || !_channels[chanIndex].getChannelOccupantMode(actualClient).getMode('o'))
+		if (!_channels[chanIndex].getMode('C', _clients[actualClient]) || !_channels[chanIndex].getMode('o', _clients[actualClient]))
 			throw Exception::ERR_CHANOPRIVSNEEDED(channelName);
-
 	_clients[clientIndex].addInvitation(channelName);
 	sendMessage(_clients[clientIndex].getClientSocket(), RPL_INVITING(_clients[clientIndex].createClientPrompt(), channelName));
 	return ;

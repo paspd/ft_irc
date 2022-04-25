@@ -134,6 +134,13 @@ bool Client::addChannel(Channel *channel) {
 	return false;
 }
 
+bool Client::checkInvited(std::string channelName) {
+	for (size_t i = 0; i < _channelInvited.size(); i++)
+		if (_channelInvited[i] == channelName)
+			return true;
+	return false;
+}
+
 void Client::leaveChannel(std::string channelName) {
 	for (size_t i = 0; i < MAX_CURRENT_CHAN; i++)
 	{

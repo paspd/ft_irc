@@ -19,10 +19,10 @@ void Server::notice(std::vector<std::string> command, int actualClient) {
 			if ((index = _channelExist(clientName[i])) >= 0) {
 				if (_channels[index].checkClientConnected(_clients[actualClient]) >= 0 || !_channels[index].getMode('n', _clients[actualClient])) {
 					if (!_channels[index].getMode('m', _clients[actualClient]) || _channels[index].getMode('C', _clients[actualClient]) || _channels[index].getMode('o', _clients[actualClient]) || _channels[index].getMode('v', _clients[actualClient])) {
-					if (!message.empty())
-						_channels[index].userSendToChannel(_clients[actualClient].getClientSocket(), RPL_NOTICE_MESSAGE(_clients[actualClient].createClientPrompt(), clientName[i], message));
-					}
-					else return ;
+						if (!message.empty())
+							_channels[index].userSendToChannel(_clients[actualClient].getClientSocket(), RPL_NOTICE_MESSAGE(_clients[actualClient].createClientPrompt(), clientName[i], message));
+						}
+						else return ;
 				}
 				else return ;
 			}

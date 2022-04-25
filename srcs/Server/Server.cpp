@@ -81,7 +81,7 @@ void Server::resetSocketDescriptor() {
 }
 
 void Server::checkActivity() {
-	if (select(_maxSocket + 1, &_socketDescriptor ,NULL, NULL, NULL) < 0 && (errno != EINTR))
+	if (select(_maxSocket + 1, &_socketDescriptor ,NULL, NULL, NULL) < 0)
 		throw Exception::SelectFailed();
 }
 
