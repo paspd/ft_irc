@@ -19,7 +19,6 @@ void Server::kick(std::vector<std::string> command, int actualClient) {
 						if (_channels[indexChan].checkClientConnected(clientName[i]) >= 0) {
 							_channels[indexChan].delOccupant(clientName[i]);
 							_clients[indexClient].leaveChannel(chanName[i]);
-							AFF(_clients[indexClient].getClientSocket());
 							sendMessage(_clients[indexClient].getClientSocket(), RPL_KICK_CMD(_clients[actualClient].createClientPrompt(), chanName[i], clientName[i], (command.size() >= 4 ? _strcatArguments(command.begin() + 3, command.end()) : "")));
 							_channels[indexChan].sendToAllChannel(RPL_KICK_CMD(_clients[actualClient].createClientPrompt(), chanName[i], clientName[i], (command.size() >= 4 ? _strcatArguments(command.begin() + 3, command.end()) : clientName[i])));
 						}

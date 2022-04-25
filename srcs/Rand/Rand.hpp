@@ -1,8 +1,6 @@
 #ifndef RAND_HPP
 #define RAND_HPP
 
-#define AFF(thing) (std::cout << thing << std::endl)
-
 #include <stdio.h>
 #include <string.h>   //strlen
 #include <string>

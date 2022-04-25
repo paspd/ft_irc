@@ -68,7 +68,6 @@ void Client::setClientMode(std::string const &mode) {
 	if (mode.size() < 2)
 			return ;
 	bool val = (mode[0] == '+' ? true : false);
-	AFF("test");
 	if ((mode[1] == 'r' && val) || _clientMode._OP)
 		_clientMode._restricted = val;
 	else if (mode[1] == 'i')
