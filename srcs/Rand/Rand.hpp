@@ -95,6 +95,7 @@ typedef struct sockaddr SOCKADDR;
 #define ERR_BADCHANNELKEY_BUILDER(channel) (SERVER_NAME_PROMPT + " 475 " + channel + " :Cannot join channel (+k)" + CRLF)
 #define ERR_CHANOPRIVSNEEDED_BUILDER(channel) (SERVER_NAME_PROMPT + " 482 " + channel + " :You're not channel operator" + CRLF)
 #define ERR_RESTRICTED_BUILDER(nickname) (SERVER_NAME_PROMPT + " 482 " + nickname + " :Your connection is restricted!" + CRLF)
+#define ERR_INVITEONLYCHAN_BUILDER(channel) (SERVER_NAME_PROMPT + " 443 " + channel + " :Invite-only channel, you are not invited" + CRLF)
 #define ERR_USERSDONTMATCH_BUILDER(nickname) (SERVER_NAME_PROMPT + " 502 " + nickname + " :Can't change mode for other users" + CRLF)
 
 #define RPL_PRIVMSG_MESSAGE(clientPrompt, nickname, message) (clientPrompt + " PRIVMSG " + nickname + " " + message + CRLF)
@@ -193,6 +194,7 @@ namespace Exception {
 		IRC_EXCEPTION_CUSTOM(ERR_NOSUCHNICK, ERR_NOSUCHNICK_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_CHANOPRIVSNEEDED, ERR_CHANOPRIVSNEEDED_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_USERSDONTMATCH, ERR_USERSDONTMATCH_BUILDER)
+		IRC_EXCEPTION_CUSTOM(ERR_INVITEONLYCHAN, ERR_INVITEONLYCHAN_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_RESTRICTED, ERR_RESTRICTED_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_QUIT, ERR_QUIT_BUILDER)
 		IRC_EXCEPTION_CUSTOM_2(ERR_USERONCHANNEL, ERR_USERONCHANNEL_BUILDER)
