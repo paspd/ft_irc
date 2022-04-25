@@ -22,6 +22,7 @@ void Server::invite(std::vector<std::string> command, int actualClient) {
 			throw Exception::ERR_CHANOPRIVSNEEDED(channelName);
 
 	_clients[clientIndex].addInvitation(channelName);
-	sendMessage(_clients[clientIndex].getClientSocket(), RPL_INVITING(_clients[clientIndex].createClientPrompt(), channelName));
+	sendMessage(_clients[actualClient].getClientSocket(), RPL_INVITING(_clients[actualClient].createClientPrompt(), channelName, clientName, _clients[actualClient].getClientNickname()));
+	sendMessage(_clients[clientIndex].getClientSocket(), RPL_INVITED(_clients[actualClient].createClientPrompt(), clientName, channelName));
 	return ;
 }
