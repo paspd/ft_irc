@@ -99,16 +99,18 @@ typedef struct sockaddr SOCKADDR;
 #define ERR_USERSDONTMATCH_BUILDER(nickname) (SERVER_NAME_PROMPT + " 502 " + nickname + " :Can't change mode for other users" + CRLF)
 
 #define RPL_PRIVMSG_MESSAGE(clientPrompt, nickname, message) (clientPrompt + " PRIVMSG " + nickname + " " + message + CRLF)
+#define RPL_NOTICE_MESSAGE(clientPrompt, nickname, message) (clientPrompt + " NOTICE " + nickname + " " + message + CRLF)
 #define RPL_TOPIC_CMD(clientPrompt, channel, topic) (clientPrompt + " TOPIC " + channel + " :" + topic + CRLF)
 #define RPL_MODE_CMD(clientPrompt, channel, mode) (clientPrompt + " MODE " + channel + " :" + mode + CRLF)
 #define RPL_MODE_CUSTOM_CMD(clientPrompt, channel, mode, param) (clientPrompt + " MODE " + channel + " :" + mode + " " + param + CRLF)
 #define RPL_CHAN_MODE(channel, mode) (SERVER_NAME_PROMPT + " MODE " + channel + " " + mode + CRLF)
 #define RPL_PART_MESSAGE(clientPrompt, channel, message) (clientPrompt + " PART " + channel + (message[0] == ':' ? " " : " :") + message + CRLF)
-#define RPL_KICK_CMD(clientPrompt, nickname, channel, message) (clientPrompt + " KICK " + nickname + " " + channel + (message.empty() ? "" : (message[0] == ':' ? " " : " :")) + message + CRLF)
+#define RPL_KICK_CMD(clientPrompt, channel, nickname, message) (clientPrompt + " KICK " + channel + " " + nickname + (message.empty() ? "" : (message[0] == ':' ? " " : " :")) + message + CRLF)
 #define RPL_PART_NOMESSAGE(clientPrompt, channel) (clientPrompt + " PART " + channel + CRLF)
 #define RPL_PONG() (SERVER_NAME_PROMPT + " PONG " + SERVER_NAME  + " " + SERVER_NAME_PROMPT +  CRLF)
 #define RPL_INVITING(clientPrompt, channel) (clientPrompt + " INVITE " + channel + CRLF)
-#define ERR_QUIT_BUILDER(ip) (SERVER_NAME_PROMPT + " ERROR :Closing link: " + ip + "(Client Quit)" + CRLF)
+#define RPL_QUIT(clientPrompt) (clientPrompt + " QUIT :Client Quit" + CRLF)
+#define RPL_QUIT_CUSTOM(clientPrompt, message) (clientPrompt + " QUIT " + (message[0] == ':' ? message : ":" + message) + CRLF)
 
 
 #define SERVER_EXCEPTION(name, function)																		\
@@ -196,7 +198,6 @@ namespace Exception {
 		IRC_EXCEPTION_CUSTOM(ERR_USERSDONTMATCH, ERR_USERSDONTMATCH_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_INVITEONLYCHAN, ERR_INVITEONLYCHAN_BUILDER)
 		IRC_EXCEPTION_CUSTOM(ERR_RESTRICTED, ERR_RESTRICTED_BUILDER)
-		IRC_EXCEPTION_CUSTOM(ERR_QUIT, ERR_QUIT_BUILDER)
 		IRC_EXCEPTION_CUSTOM_2(ERR_USERONCHANNEL, ERR_USERONCHANNEL_BUILDER)
 		IRC_EXCEPTION_CUSTOM_2(ERR_TOOMANYCHANNELS, ERR_TOOMANYCHANNELS_BUILDER)
 		IRC_EXCEPTION_CUSTOM_2(ERR_CANNOTSENDTOCHAN, ERR_CANNOTSENDTOCHAN_BUILDER)

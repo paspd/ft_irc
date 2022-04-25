@@ -1,6 +1,6 @@
 NAME			=		ircserv
 
-CC				=		clang++
+CC				=		@clang++
 
 CFLAGS			=		-Wall -Werror -Wextra -std=c++98 -g
 
@@ -23,10 +23,12 @@ SRCS			=		srcs/main.cpp \
 						srcs/Commands/MSG.cpp \
 						srcs/Commands/NAMES.cpp \
 						srcs/Commands/NICK.cpp \
+						srcs/Commands/NOTICE.cpp \
 						srcs/Commands/OPER.cpp \
 						srcs/Commands/PART.cpp \
 						srcs/Commands/PASS.cpp \
 						srcs/Commands/PING.cpp \
+						srcs/Commands/QUIT.cpp \
 						srcs/Commands/TOPIC.cpp \
 						srcs/Commands/USER.cpp \
 						srcs/Rand/Rand.cpp

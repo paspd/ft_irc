@@ -208,6 +208,12 @@ std::string Client::getStrMode() {
 	return ss.str();
 }
 
+void Client::sendToAllCurrent(std::string msg) {
+	for (size_t i = 0; i < MAX_CURRENT_CHAN; i++)
+		if (_currentChannels[i] != NULL)
+			_currentChannels[i]->userSendToChannel(_clientSocket, msg);
+}
+
 void Client::setOP(bool const &val) {
 	_clientMode._OP = val;
 }
